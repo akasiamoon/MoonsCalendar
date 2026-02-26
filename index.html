@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonsCalendar | Shared Grimoire</title>
+    <title>MoonsCalendar | High Grimoire</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -54,10 +54,9 @@
 
         .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.15); font-size: 0.9rem; cursor: pointer; font-weight: 900; background: rgba(0,0,0,0.4); }
         .calendar-grid div:hover { background: var(--gold); color: #000 !important; }
-        .today { background: rgba(212, 175, 55, 0.3) !important; border: 2.5px solid var(--gold) !important; color: #fff !important; box-shadow: 0 0 15px var(--gold); }
+        .today { background: rgba(212, 175, 55, 0.3) !important; border: 2.5px solid var(--gold) !important; color: #fff !important; }
         .has-ritual { border: 2px solid var(--magic-purple) !important; box-shadow: inset 0 0 12px var(--magic-purple) !important; }
         .is-holiday { border: 2px solid var(--gold-bright) !important; background: rgba(251, 245, 183, 0.1) !important; }
-        .selected-day { border: 2.5px solid var(--gold-bright) !important; transform: scale(1.05); }
 
         .nav-btn { cursor: pointer; transition: 0.3s; color: var(--gold); }
         .ui-panel::-webkit-scrollbar { width: 5px; }
@@ -82,26 +81,28 @@
                     <span class="avatar-btn" data-sigil="🌙" onclick="setAvatar('🌙', this)">🌙</span>
                     <span class="avatar-btn" data-sigil="⚔️" onclick="setAvatar('⚔️', this)">⚔️</span>
                 </div>
-                <input type="text" id="userName" placeholder="Your Name..." onchange="saveIdentity()" class="w-full bg-transparent border-b border-yellow-600/30 p-1 text-center text-sm italic font-black outline-none placeholder-yellow-900/50">
+                <input type="text" id="userName" placeholder="Your Name..." onchange="saveIdentity()" class="w-full bg-transparent border-b border-yellow-600/30 p-1 text-center text-sm italic font-black outline-none">
             </div>
 
             <div class="artifact-card flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <div id="w-icon-container"><i data-lucide="cloud-sun" class="w-10 h-10 text-yellow-500"></i></div>
-                    <span id="current-temp" class="text-3xl font-black gold-text">--°</span>
+                    <div id="w-icon-container" class="filter drop-shadow(0 0 10px var(--gold))">
+                        <i data-lucide="cloud-sun" class="w-10 h-10 text-yellow-500"></i>
+                    </div>
+                    <span id="current-temp" class="text-2xl font-black gold-text">--°</span>
                 </div>
                 <div class="text-right">
-                    <p id="current-time" class="font-black text-lg">--:-- --</p>
-                    <p id="weather-desc" class="text-[9px] tracking-widest uppercase opacity-60">Consulting Skies</p>
+                    <p id="current-time" class="font-black text-lg gold-text">--:-- --</p>
+                    <p id="weather-desc" class="text-[9px] tracking-widest uppercase opacity-60 font-black">Consulting Skies</p>
                 </div>
             </div>
 
             <div id="appt-form" class="artifact-card hidden border-purple-500/50 relative">
                 <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40">✕</button>
                 <h3 class="text-[10px] mb-4 font-black uppercase tracking-widest">Inscribe Ritual</h3>
-                <input type="text" id="appt-input" placeholder="What cycle begins?..." class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-4 outline-none italic font-black text-parchment">
+                <input type="text" id="appt-input" placeholder="What cycle begins?..." class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-4 outline-none font-black italic text-parchment">
                 <input type="time" id="appt-time" class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-6 outline-none text-purple-200">
-                <button onclick="saveAppointment()" class="w-full bg-purple-900/40 border-2 border-purple-500 py-3 text-[10px] uppercase font-black hover:bg-purple-900/60 transition">Seal In Time</button>
+                <button onclick="saveAppointment()" class="w-full bg-purple-900/40 border-2 border-purple-500 py-3 text-[10px] uppercase font-black hover:bg-purple-900/60">Seal Ritual</button>
             </div>
 
             <div class="artifact-card">
@@ -114,7 +115,7 @@
             </div>
 
             <div class="artifact-card min-h-[150px]">
-                <h3 class="text-[10px] mb-4 text-purple-400 font-black uppercase tracking-widest border-b border-purple-900/30 pb-2">Shared History</h3>
+                <h3 class="text-[10px] mb-4 text-purple-400 font-black uppercase tracking-widest">Shared History</h3>
                 <div id="appt-list" class="space-y-4"></div>
             </div>
 
@@ -122,8 +123,8 @@
                 <h3 class="text-[10px] mb-8 uppercase tracking-widest font-black flex items-center gap-3"><i data-lucide="scroll" class="w-5 h-5 text-yellow-600"></i> General Whispers</h3>
                 <div id="whisper-list" class="space-y-5 overflow-y-auto flex-grow mb-6 pr-2 font-black italic"></div>
                 <div class="mt-auto">
-                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b-2 border-yellow-600/30 p-3 text-sm outline-none italic placeholder-yellow-900/50 font-black">
-                    <button onclick="addWhisper()" class="w-full mt-6 bg-yellow-900/30 border-2 border-yellow-600/40 py-4 text-[10px] uppercase font-black hover:bg-yellow-600/40 transition">Inscribe Whisper</button>
+                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b-2 border-yellow-600/30 p-3 text-sm outline-none font-black italic">
+                    <button onclick="addWhisper()" class="w-full mt-6 bg-yellow-900/30 border-2 border-yellow-600/40 py-4 text-[10px] uppercase font-black">Inscribe Whisper</button>
                 </div>
             </div>
         </section>
@@ -133,6 +134,7 @@
     <script>
         const SB_URL = 'https://qgppnxpezkqfqdcazrol.supabase.co';
         const SB_KEY = 'sb_publishable_aHS858clyUkvMHC3KH-HGQ_kSx1XJ3X';
+        const W_KEY = '88f3e35af62ba59bad38a3d346e0ca84';
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
         
         let currentDate = new Date();
@@ -160,11 +162,28 @@
             saveIdentity();
         }
 
+        async function fetchWeather() {
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Farmington,MS,US&units=imperial&appid=${W_KEY}`);
+                const data = await res.json();
+                if(data.main) {
+                    document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
+                    document.getElementById('weather-desc').innerText = data.weather[0].description;
+                    const main = data.weather[0].main.toLowerCase();
+                    let icon = 'cloud-sun';
+                    if(main.includes('rain')) icon = 'cloud-rain'; else if(main.includes('clear')) icon = 'sun';
+                    document.getElementById('w-icon-container').innerHTML = `<i data-lucide="${icon}" class="w-10 h-10 text-yellow-500"></i>`;
+                    lucide.createIcons();
+                }
+            } catch (e) { console.error("Weather Error:", e); }
+        }
+
         async function initData() {
             const { data } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
             allAppointments = data || [];
             renderCalendar();
             loadWhispers();
+            fetchWeather();
             lucide.createIcons();
         }
 
@@ -203,17 +222,10 @@
         async function saveAppointment() {
             const input = document.getElementById('appt-input');
             const time = document.getElementById('appt-time').value;
-            const name = document.getElementById('userName').value || 'Someone';
+            const name = document.getElementById('userName').value || 'Amber';
             if(!input.value || !selectedDate) return;
-            
-            await _supabase.from('appointments').insert([{ 
-                title: `${currentSigil} ${name}: ${input.value}`, 
-                event_date: selectedDate, 
-                event_time: time || null 
-            }]);
-            
-            input.value = '';
-            await initData();
+            await _supabase.from('appointments').insert([{ title: `${currentSigil} ${name}: ${input.value}`, event_date: selectedDate, event_time: time || null }]);
+            input.value = ''; await initData();
             loadDayAppointments();
         }
 
@@ -224,7 +236,7 @@
                     <span><span class="text-purple-400 mr-2">${a.event_time || ''}</span> ${a.title}</span>
                     <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-60">✕</button>
                 </div>
-            `).join('') || '<p class="text-[10px] opacity-40 italic">No rituals inscribed.</p>';
+            `).join('') || '<p class="text-[10px] opacity-40 italic font-black">No rituals inscribed.</p>';
         }
 
         async function deleteAppt(id) { await _supabase.from('appointments').delete().eq('id', id); await initData(); }
@@ -236,7 +248,7 @@
 
         async function addWhisper() {
             const i = document.getElementById('whisper-input'); if(!i.value.trim()) return;
-            const name = document.getElementById('userName').value || 'Someone';
+            const name = document.getElementById('userName').value || 'Amber';
             await _supabase.from('magical_events').insert([{ title: `${currentSigil} ${name}: ${i.value}`, event_date: new Date() }]);
             i.value = ''; loadWhispers();
         }
