@@ -23,59 +23,42 @@
             background-color: var(--dark-forest); 
             color: var(--parchment); 
             font-family: 'Quattrocento', serif; 
-            overflow: hidden; /* We'll scroll individual panels instead */
+            overflow: hidden;
         }
 
-        /* SPLIT SCREEN LAYOUT */
-        .wrapper {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-        }
+        .wrapper { display: flex; height: 100vh; width: 100vw; }
 
-        /* LEFT SIDE: THE CONTROL PANEL */
         .ui-panel {
-            width: 40%; /* Professional column width */
-            height: 100%;
-            overflow-y: auto;
+            width: 40%; height: 100%; overflow-y: auto;
             background: linear-gradient(to bottom, #0D1310, #161d1a);
             border-right: 2px solid var(--gold);
-            padding: 3rem 2rem;
-            z-index: 20;
+            padding: 3rem 2rem; z-index: 20;
             box-shadow: 10px 0 30px rgba(0,0,0,0.5);
         }
 
-        /* RIGHT SIDE: THE MASTERPIECE */
         .art-panel {
-            width: 60%;
-            height: 100%;
+            width: 60%; height: 100%;
             background-image: url('MARCH COVER.jpg');
-            background-size: cover;
-            background-position: center;
+            background-size: cover; background-position: center;
             position: relative;
         }
 
         .art-panel::before {
-            content: "";
-            position: absolute;
-            inset: 0;
+            content: ""; position: absolute; inset: 0;
             background: linear-gradient(to right, rgba(13,19,16,0.4), transparent);
         }
 
-        /* MOBILE ADJUSTMENTS */
         @media (max-width: 1024px) {
             .wrapper { flex-direction: column-reverse; overflow-y: auto; height: auto; }
             .ui-panel, .art-panel { width: 100%; height: auto; }
-            .art-panel { height: 50vh; }
+            .art-panel { height: 40vh; }
             body { overflow: auto; }
         }
 
-        /* STUNNING TYPOGRAPHY */
         h1, h2, .gold-text { 
             font-family: 'Cinzel', serif; 
             background: linear-gradient(to bottom, #fcf6ba, #bf953f, #fcf6ba, #aa771c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
             letter-spacing: 0.1em;
         }
@@ -83,14 +66,9 @@
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(212, 175, 55, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 4px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            transition: 0.3s;
+            backdrop-filter: blur(10px); border-radius: 4px;
+            padding: 1.5rem; margin-bottom: 2rem; transition: 0.3s;
         }
-
-        .glass-card:hover { border-color: var(--gold); background: rgba(255, 255, 255, 0.05); }
 
         .calendar-grid div { 
             aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
@@ -99,29 +77,31 @@
         .calendar-grid div:hover { background: var(--gold); color: black; font-weight: bold; }
         .today { background: rgba(212, 175, 55, 0.3) !important; border: 1px solid var(--gold) !important; font-weight: bold; color: var(--gold-bright); }
 
-        /* SCROLLBAR */
         .ui-panel::-webkit-scrollbar { width: 4px; }
         .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); }
+        
+        .weather-icon-gold { color: var(--gold); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5)); }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
-        
         <section class="ui-panel">
             <header class="mb-12">
                 <h1 class="text-4xl font-bold uppercase mb-2">MoonsCalendar</h1>
                 <p class="text-[10px] tracking-[0.5em] text-yellow-600 uppercase mb-6 font-bold">Collector's Edition | Farmington MS</p>
                 
-                <div id="weather-widget" class="flex items-center gap-6 glass-card !p-4">
-                    <div class="text-center">
-                        <span id="current-temp" class="text-3xl font-bold gold-text">--°</span>
-                        <p class="text-[8px] uppercase tracking-widest opacity-60">Temperature</p>
+                <div id="weather-widget" class="flex items-center gap-6 glass-card !p-5">
+                    <div id="w-icon-container" class="weather-icon-gold">
+                        <i data-lucide="cloud-sun" class="w-10 h-10"></i>
                     </div>
                     <div class="h-10 w-[1px] bg-yellow-600/20"></div>
                     <div class="flex-grow">
-                        <p id="current-time" class="text-lg font-bold">--:-- --</p>
-                        <p id="weather-desc" class="text-[8px] uppercase tracking-widest text-yellow-500">Reading Skies</p>
+                        <div class="flex items-baseline gap-2">
+                            <span id="current-temp" class="text-3xl font-bold gold-text">--°</span>
+                            <p id="current-time" class="text-sm font-bold opacity-80">--:-- --</p>
+                        </div>
+                        <p id="weather-desc" class="text-[9px] uppercase tracking-[0.2em] text-yellow-500 font-bold mt-1">Reading Skies</p>
                     </div>
                 </div>
             </header>
@@ -135,7 +115,7 @@
             </div>
 
             <div class="glass-card">
-                <h2 id="calendar-month" class="text-lg uppercase tracking-[0.3em] mb-4 text-center border-b border-yellow-600/20 pb-2"></h2>
+                <h2 id="calendar-month" class="text-lg uppercase tracking-[0.3em] mb-4 text-center border-b border-yellow-600/20 pb-2 font-bold"></h2>
                 <div class="grid grid-cols-7 gap-1 text-center text-[9px] opacity-40 mb-2 font-bold tracking-widest uppercase">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
@@ -150,20 +130,14 @@
                 <div class="mt-auto">
                     <input type="text" id="note-input" placeholder="Speak to the scroll..." 
                            class="w-full bg-transparent border-b border-yellow-600/30 p-2 text-sm focus:outline-none focus:border-gold italic text-yellow-100/80">
-                    <button onclick="addNote()" class="w-full mt-6 bg-yellow-700/10 border border-yellow-600/40 py-3 text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-yellow-600/30 transition shadow-2xl">
+                    <button onclick="addNote()" class="w-full mt-6 bg-yellow-700/10 border border-yellow-600/40 py-3 text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-yellow-600/30 transition">
                         Inscribe
                     </button>
                 </div>
             </div>
         </section>
 
-        <section class="art-panel">
-            <div class="absolute bottom-10 right-10 text-right opacity-30">
-                <p class="text-[10px] uppercase tracking-[0.6em]">Whispers & Wonders</p>
-                <p class="text-[8px] italic">Est. 2026</p>
-            </div>
-        </section>
-
+        <section class="art-panel"></section>
     </div>
 
     <script>
@@ -185,6 +159,19 @@
                 if(data.main) {
                     document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
                     document.getElementById('weather-desc').innerText = data.weather[0].description;
+                    
+                    // ICON LOGIC
+                    const main = data.weather[0].main.toLowerCase();
+                    let iconName = 'cloud-sun';
+                    if(main.includes('rain')) iconName = 'cloud-rain';
+                    else if(main.includes('clear')) iconName = 'sun';
+                    else if(main.includes('cloud')) iconName = 'cloud';
+                    else if(main.includes('thunder')) iconName = 'cloud-lightning';
+                    else if(main.includes('snow')) iconName = 'snowflake';
+                    
+                    const container = document.getElementById('w-icon-container');
+                    container.innerHTML = `<i data-lucide="${iconName}" class="w-10 h-10"></i>`;
+                    lucide.createIcons();
                 }
             } catch (e) { console.log(e); }
         }
@@ -240,8 +227,7 @@
         }
 
         updateClock(); renderCalendar(); loadNotes(); fetchWeather(); calculateMoonPhase();
-        setInterval(updateClock, 1000);
-        setInterval(fetchWeather, 600000);
+        setInterval(updateClock, 1000); setInterval(fetchWeather, 600000);
         _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'magical_events' }, loadNotes).subscribe();
     </script>
 </body>
