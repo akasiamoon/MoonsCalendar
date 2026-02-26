@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moon's Calendar</title>
+    <title>MoonsCalendar | Final Sanctuary</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -28,6 +28,7 @@
             background: linear-gradient(145deg, #0D1310 0%, #050807 100%);
             border-right: 5px solid; border-image: linear-gradient(to bottom, var(--gold), #8A6D3B, var(--gold)) 1;
             padding: 3rem 1.5rem; z-index: 50; position: relative;
+            scrollbar-width: thin; scrollbar-color: var(--gold) transparent;
             box-shadow: 35px 0 90px var(--deep-shadow);
         }
 
@@ -93,7 +94,7 @@
     <div class="wrapper">
         <section class="ui-panel">
             <header class="title-container">
-                <h1>Moon's Calendar</h1>
+                <h1>MoonsCalendar</h1>
                 <p class="text-[10px] tracking-[0.7em] text-yellow-600 font-black uppercase mt-4">Sacred Grimoire | Farmington MS</p>
             </header>
 
@@ -110,12 +111,7 @@
             </div>
 
             <div class="artifact-card flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div id="w-icon-container" class="filter drop-shadow(0 0 10px var(--gold))">
-                        <i data-lucide="cloud-sun" class="w-10 h-10 text-yellow-500"></i>
-                    </div>
-                    <span id="current-temp" class="text-2xl font-black gold-text">--°</span>
-                </div>
+                <div id="current-temp" class="text-2xl font-black gold-text">--°</div>
                 <div class="text-right">
                     <p id="current-time" class="font-black text-xl gold-text">--:-- --</p>
                     <p id="weather-desc" class="text-[9px] tracking-widest uppercase opacity-60 font-black">Reading Skies</p>
@@ -126,7 +122,7 @@
                 <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40 hover:opacity-100 transition">✕</button>
                 <h3 class="text-xs mb-6 font-black uppercase tracking-widest text-purple-400">Inscribe Ritual</h3>
                 <input type="text" id="appt-input" placeholder="What cycle begins?..." class="w-full bg-black/60 border-b-2 border-purple-500 p-3 text-sm mb-4 outline-none italic text-parchment font-black">
-                <input type="time" id="appt-time" class="w-full bg-black/40 border-b-2 border-purple-500 p-3 text-sm mb-6 outline-none text-purple-200 font-black">
+                <input type="time" id="appt-time" class="w-full bg-black/60 border-b-2 border-purple-500 p-3 text-sm mb-6 outline-none text-purple-200 font-black">
                 <button onclick="saveAppointment()" class="w-full bg-purple-900/40 border-2 border-purple-500 py-4 text-xs font-black uppercase tracking-[0.4em] hover:bg-purple-900/60 transition">Seal Ritual</button>
             </div>
 
@@ -172,7 +168,6 @@
         let currentSigil = '🔮';
         const holidays = { "2-2": "Imbolc", "2-14": "Valentine's Day", "3-17": "St. Patrick's Day", "3-20": "Vernal Equinox", "4-5": "Easter" };
 
-        // PARTICLE ENGINE
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -186,12 +181,10 @@
             requestAnimationFrame(drawParticles);
         }
 
-        // IDENTITY STORAGE
         function saveIdentity() { localStorage.setItem('grimoire_name', document.getElementById('userName').value); localStorage.setItem('grimoire_sigil', currentSigil); }
         function loadIdentity() { document.getElementById('userName').value = localStorage.getItem('grimoire_name') || 'Amber'; currentSigil = localStorage.getItem('grimoire_sigil') || '🔮'; document.querySelectorAll('.avatar-btn').forEach(btn => btn.classList.toggle('selected', btn.getAttribute('data-sigil') === currentSigil)); }
         function setAvatar(sigil, el) { currentSigil = sigil; document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); saveIdentity(); }
 
-        // DATA LOGIC
         async function initData() {
             const { data } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
             allAppointments = data || []; renderCalendar(); loadWhispers(); fetchWeather(); lucide.createIcons();
@@ -217,6 +210,8 @@
 
         function changeMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
         function selectDay(date, el) { selectedDate = date; document.querySelectorAll('.calendar-grid div').forEach(div => div.classList.remove('selected-day')); el.classList.add('selected-day'); document.getElementById('appt-form').classList.remove('hidden'); loadDayAppointments(); }
+        function hideApptForm() { document.getElementById('appt-form').classList.add('hidden'); document.querySelectorAll('.calendar-grid div').forEach(div => div.classList.remove('selected-day')); }
+
         async function saveAppointment() {
             const i = document.getElementById('appt-input'); const t = document.getElementById('appt-time').value;
             const name = document.getElementById('userName').value || 'Amber';
