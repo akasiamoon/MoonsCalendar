@@ -34,7 +34,7 @@
 
         .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
-        /* FIXED TITLE LOGIC */
+        /* FIXED DOMINANT HEADER */
         .title-container { width: 100%; text-align: center; margin-bottom: 2.5rem; }
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
@@ -49,17 +49,16 @@
 
         .artifact-card { 
             background: rgba(13, 19, 16, 0.9); border: 1px solid rgba(212, 175, 55, 0.2); 
-            padding: 1.5rem; margin-bottom: 2rem; border-radius: 2px;
+            padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 2px;
             box-shadow: 0 15px 35px var(--deep-shadow), inset 0 0 15px rgba(0,0,0,0.5);
         }
 
-        /* IMPROVED WEATHER LAYOUT */
-        .weather-display { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
-        #current-temp { font-size: 3.5rem; font-weight: 900; line-height: 1; }
-        #current-time { color: var(--gold-bright); font-weight: 900; font-size: 1.25rem; letter-spacing: 0.05em; }
-        .weather-desc { text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold); opacity: 0.8; font-weight: 700; }
+        /* PROPORTIONAL WEATHER & TIME */
+        .weather-display { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: center; }
+        #current-temp { font-size: 2rem; font-weight: 900; color: var(--gold-bright); } /* Scaled down */
+        #current-time { color: var(--gold-bright); font-weight: 900; font-size: 1.1rem; letter-spacing: 0.05em; }
+        .weather-desc { text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--gold); opacity: 0.8; font-weight: 700; }
         
-        /* CALENDAR AGED PARCHMENT */
         .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.1); font-size: 0.85rem; cursor: pointer; color: var(--parchment); font-weight: 700; background: rgba(0,0,0,0.3); transition: 0.3s; }
         .calendar-grid div:hover { background: var(--gold); color: #050807 !important; box-shadow: 0 0 20px var(--gold); }
         
@@ -88,12 +87,12 @@
 
             <div class="artifact-card">
                 <div class="weather-display">
-                    <div id="w-icon-container" class="filter drop-shadow(0 0 12px var(--gold))">
-                        <i data-lucide="cloud-sun" class="w-14 h-14 text-yellow-500"></i>
+                    <div id="w-icon-container" class="filter drop-shadow(0 0 10px var(--gold))">
+                        <i data-lucide="cloud-sun" class="w-10 h-10 text-yellow-500"></i>
                     </div>
-                    <div class="flex flex-col justify-center border-l border-yellow-600/20 pl-6">
-                        <div class="flex items-center gap-4">
-                            <span id="current-temp" class="gold-text">--°</span>
+                    <div class="flex flex-col justify-center border-l border-yellow-600/20 pl-4">
+                        <div class="flex items-center gap-3">
+                            <span id="current-temp">--°</span>
                             <div class="flex flex-col">
                                 <p id="current-time">--:-- --</p>
                                 <p id="weather-desc" class="weather-desc">Reading the skies...</p>
@@ -103,12 +102,20 @@
                 </div>
             </div>
 
+            <div class="artifact-card flex items-center gap-6">
+                <div id="moon-icon" class="text-5xl filter drop-shadow(0 0 12px var(--gold))">🌑</div>
+                <div>
+                    <h3 class="gold-text uppercase text-[10px] tracking-widest font-bold" id="moon-phase-name">Almanac</h3>
+                    <p id="planting-tip" class="text-[10px] italic opacity-70 mt-1 leading-relaxed"></p>
+                </div>
+            </div>
+
             <div id="appt-form" class="artifact-card hidden border-purple-500/50 relative">
                 <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40 hover:opacity-100 transition">✕</button>
                 <h3 class="text-[10px] mb-4 flex justify-between font-bold">Inscribing Ritual: <span id="target-date-display" class="text-purple-400">--</span></h3>
                 <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b border-purple-500 p-2 text-sm mb-4 outline-none italic text-parchment">
                 <input type="time" id="appt-time" class="w-full bg-black/40 border-b border-purple-500 p-2 text-sm mb-6 outline-none text-purple-200">
-                <button onclick="saveAppointment()" class="w-full bg-purple-900/30 border border-purple-500 py-3 text-[10px] uppercase tracking-widest font-black hover:bg-purple-900/50 transition">Seal Ritual</button>
+                <button onclick="saveAppointment()" class="w-full bg-purple-900/30 border border-purple-500 py-3 text-[9px] uppercase tracking-widest font-black hover:bg-purple-900/50 transition">Seal Ritual</button>
             </div>
 
             <div class="artifact-card">
@@ -124,8 +131,8 @@
                 <div id="appt-list" class="space-y-3"></div>
             </div>
 
-            <div class="artifact-card min-h-[300px] flex flex-col">
-                <h3 class="text-[10px] mb-6 uppercase tracking-widest font-black">General Whispers</h3>
+            <div class="artifact-card min-h-[250px] flex flex-col">
+                <h3 class="text-[10px] mb-6 uppercase tracking-widest font-bold">General Whispers</h3>
                 <div id="whisper-list" class="space-y-4 overflow-y-auto flex-grow mb-4 pr-1 text-sm italic"></div>
                 <div class="mt-auto">
                     <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b border-yellow-600/30 p-2 text-sm outline-none italic placeholder-yellow-900/50">
@@ -159,7 +166,7 @@
                     const main = data.weather[0].main.toLowerCase();
                     let icon = 'cloud-sun';
                     if(main.includes('rain')) icon = 'cloud-rain'; else if(main.includes('clear')) icon = 'sun';
-                    document.getElementById('w-icon-container').innerHTML = `<i data-lucide="${icon}" class="w-14 h-14 text-yellow-500"></i>`;
+                    document.getElementById('w-icon-container').innerHTML = `<i data-lucide="${icon}" class="w-10 h-10 text-yellow-500"></i>`;
                     lucide.createIcons();
                 }
             } catch (e) { console.error(e); }
@@ -173,6 +180,8 @@
                 renderCalendar();
                 if (selectedDate) loadDayAppointments();
                 loadWhispers();
+                fetchWeather();
+                calculateMoonPhase();
             } catch (e) { console.error("Load Error:", e); }
         }
 
@@ -217,7 +226,7 @@
             const event_time = document.getElementById('appt-time').value;
             if(!title || !selectedDate) return;
             const { error } = await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time: event_time || null }]);
-            if (error) { console.error("Save Error:", error); return; }
+            if (error) return;
             document.getElementById('appt-input').value = '';
             document.getElementById('appt-time').value = '';
             await initData();
@@ -227,7 +236,7 @@
             const filtered = allAppointments.filter(a => a.event_date === selectedDate);
             document.getElementById('appt-list').innerHTML = filtered.map(a => `
                 <div class="flex justify-between items-center p-3 bg-purple-900/10 border-l-2 border-purple-500 text-xs shadow-xl">
-                    <span><span class="text-purple-400 font-black mr-2">${a.event_time || ''}</span> ${a.title}</span>
+                    <span><span class="text-purple-400 font-black mr-2">${a.event_time || '--:--'}</span> ${a.title}</span>
                     <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-50 hover:opacity-100">✕</button>
                 </div>
             `).join('');
@@ -262,8 +271,24 @@
             loadWhispers();
         }
 
-        updateClock(); initData(); fetchWeather();
-        setInterval(updateClock, 1000); setInterval(fetchWeather, 600000);
+        function calculateMoonPhase() {
+            const lp = 2551443; const now = new Date(); const new_moon = new Date(1970, 0, 7, 20, 35, 0);
+            const phase = ((now.getTime() - new_moon.getTime()) / 1000) % lp;
+            const res = Math.floor(phase / (24 * 3600));
+            let icon = "🌑"; let name = "New Moon"; let tip = "Rest and plan your garden.";
+            if (res > 1 && res <= 6) { icon = "🌒"; name = "Waxing Crescent"; tip = "Sow seeds for leafy greens."; }
+            else if (res > 6 && res <= 9) { icon = "🌓"; name = "First Quarter"; tip = "Plant above-ground crops now."; }
+            else if (res > 9 && res <= 13) { icon = "🌔"; name = "Waxing Gibbous"; tip = "Fertilize and support growth."; }
+            else if (res > 13 && res <= 16) { icon = "🌕"; name = "Full Moon"; tip = "Harvest herbs and root crops."; }
+            else if (res > 16 && res <= 20) { icon = "🌖"; name = "Waning Gibbous"; tip = "Prune and transplant."; }
+            else if (res > 20 && res <= 23) { icon = "🌗"; name = "Last Quarter"; tip = "Focus on weeding and pests."; }
+            else if (res > 23) { icon = "🌘"; name = "Waning Crescent"; tip = "Prepare soil for the cycle."; }
+            document.getElementById('moon-icon').innerText = icon;
+            document.getElementById('moon-phase-name').innerText = name;
+            document.getElementById('planting-tip').innerText = tip;
+        }
+
+        updateClock(); initData(); setInterval(updateClock, 1000); setInterval(fetchWeather, 600000);
         _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, initData).subscribe();
     </script>
 </body>
