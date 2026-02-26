@@ -14,7 +14,7 @@
         :root { 
             --gold: #D4AF37; 
             --gold-bright: #FBF5B7;
-            --deep-shadow: rgba(0, 0, 0, 0.8);
+            --deep-shadow: rgba(0, 0, 0, 0.9);
         }
 
         body, html { 
@@ -25,14 +25,24 @@
 
         .wrapper { display: flex; height: 100vh; width: 100vw; }
 
+        /* HEAVY UI PANEL WITH CUSTOM SCROLLBAR */
         .ui-panel {
             width: 35%; height: 100%; overflow-y: auto;
             background: linear-gradient(145deg, #0D1310 0%, #050807 100%);
             border-right: 3px solid;
             border-image: linear-gradient(to bottom, var(--gold), #8A6D3B, var(--gold)) 1;
-            padding: 3rem 1.5rem; z-index: 20;
+            padding: 2rem 1.5rem; z-index: 20;
             box-shadow: 20px 0 50px var(--deep-shadow);
             position: relative;
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) transparent;
+        }
+
+        .ui-panel::-webkit-scrollbar { width: 4px; }
+        .ui-panel::-webkit-scrollbar-track { background: transparent; }
+        .ui-panel::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            border-radius: 10px;
         }
 
         .ui-panel::before {
@@ -55,48 +65,48 @@
             body { overflow: auto; }
         }
 
-        /* FIXED TITLE LOGIC */
-        h1, h2, .gold-text { 
+        /* EMBOSSED GOLD TITLE */
+        h1 { 
             font-family: 'Cinzel', serif; font-weight: 900;
             background: linear-gradient(to bottom, #fcf6ba 0%, #bf953f 45%, #8A6D3B 55%, #fcf6ba 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
-            letter-spacing: 0.1em; text-transform: uppercase;
-            width: 100%; display: block;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            width: 100%; display: block; white-space: nowrap;
+            font-size: 2.25rem !important;
         }
 
         .artifact-card {
             background: rgba(13, 19, 16, 0.8);
             border: 1px solid rgba(212, 175, 55, 0.3);
             box-shadow: 0 10px 30px var(--deep-shadow);
-            border-radius: 2px; padding: 1.5rem; margin-bottom: 2rem;
+            border-radius: 2px; padding: 1.25rem; margin-bottom: 1.5rem;
         }
 
         .calendar-grid div { 
             aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
             border: 1px solid rgba(212, 175, 55, 0.05); font-size: 0.75rem; cursor: pointer;
         }
-        .calendar-grid div:hover { background: var(--gold); color: black; }
+        .calendar-grid div:hover { background: var(--gold); color: black; font-weight: bold; }
         .today { background: rgba(212, 175, 55, 0.3) !important; border: 1px solid var(--gold) !important; font-weight: bold; }
-        .selected-day { border: 2px solid var(--gold-bright) !important; box-shadow: 0 0 10px var(--gold); }
+        .selected-day { border: 2px solid var(--gold-bright) !important; box-shadow: 0 0 15px var(--gold); }
 
-        .weather-icon-gold { color: var(--gold-bright); filter: drop-shadow(0 0 12px var(--gold)); animation: pulse-glow 3s infinite; }
-        @keyframes pulse-glow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+        .weather-icon-gold { color: var(--gold-bright); filter: drop-shadow(0 0 12px var(--gold)); }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <section class="ui-panel">
-            <header class="mb-12 text-center">
-                <h1 class="text-3xl font-black px-2">MoonsCalendar</h1>
-                <p class="text-[8px] tracking-[0.5em] text-yellow-600 font-bold opacity-80 uppercase mt-2">The Grimoire Edition</p>
+            <header class="mb-8 text-center">
+                <h1 class="font-black">MoonsCalendar</h1>
+                <p class="text-[8px] tracking-[0.5em] text-yellow-600 font-bold opacity-80 uppercase mt-1">The Grimoire Edition</p>
             </header>
 
-            <div class="artifact-card flex items-center gap-6">
+            <div class="artifact-card flex items-center gap-4">
                 <div id="w-icon-container" class="weather-icon-gold"><i data-lucide="cloud-sun" class="w-10 h-10"></i></div>
                 <div class="flex-grow">
-                    <div class="flex justify-between items-baseline">
+                    <div class="flex justify-between items-center">
                         <span id="current-temp" class="text-3xl font-black gold-text">--°</span>
                         <p id="current-time" class="text-xs font-bold opacity-60">--:-- --</p>
                     </div>
@@ -104,25 +114,25 @@
                 </div>
             </div>
 
-            <div class="artifact-card flex items-center gap-6">
-                <div id="moon-icon" class="text-6xl">🌑</div>
+            <div class="artifact-card flex items-center gap-4">
+                <div id="moon-icon" class="text-5xl">🌑</div>
                 <div>
                     <h3 class="gold-text uppercase text-[10px] tracking-widest font-bold" id="moon-phase-name">Almanac</h3>
-                    <p id="planting-tip" class="text-xs italic opacity-70 mt-1 leading-relaxed"></p>
+                    <p id="planting-tip" class="text-[10px] italic opacity-70 mt-1 leading-relaxed"></p>
                 </div>
             </div>
 
             <div class="artifact-card">
-                <h2 id="calendar-month" class="text-lg uppercase tracking-[0.3em] mb-4 text-center gold-text"></h2>
+                <h2 id="calendar-month" class="text-lg uppercase tracking-[0.3em] mb-4 text-center gold-text font-bold"></h2>
                 <div id="calendar-days" class="grid grid-cols-7 gap-1 calendar-grid"></div>
-                <button onclick="clearFilter()" id="clear-btn" class="hidden w-full mt-4 text-[9px] uppercase tracking-widest text-yellow-600 hover:text-white">View All Whispers</button>
+                <button onclick="clearFilter()" id="clear-btn" class="hidden w-full mt-4 text-[9px] uppercase tracking-widest text-yellow-600 hover:text-white font-bold">View All Whispers</button>
             </div>
 
-            <div class="artifact-card min-h-[350px] flex flex-col">
-                <h3 class="gold-text uppercase text-[10px] tracking-widest font-black mb-6 flex items-center gap-3">
+            <div class="artifact-card min-h-[300px] flex flex-col">
+                <h3 class="gold-text uppercase text-[10px] tracking-widest font-black mb-4 flex items-center gap-2">
                     <i data-lucide="scroll" class="w-4 h-4 text-yellow-600"></i> Inscribed Whispers
                 </h3>
-                <div id="event-list" class="space-y-4 overflow-y-auto flex-grow mb-4 pr-1"></div>
+                <div id="event-list" class="space-y-3 overflow-y-auto flex-grow mb-4 pr-1 text-sm"></div>
                 <div class="mt-auto">
                     <input type="text" id="note-input" placeholder="Whisper your intent..." 
                            class="w-full bg-transparent border-b border-yellow-600/30 p-2 text-sm focus:outline-none focus:border-gold italic">
@@ -177,16 +187,16 @@
                 const d = document.createElement('div');
                 d.innerText = i;
                 if(i === now.getDate()) d.className = "today";
-                d.onclick = () => filterByDate(i);
+                d.onclick = (e) => filterByDate(i, e.target);
                 grid.appendChild(d);
             }
         }
 
-        function filterByDate(day) {
+        function filterByDate(day, element) {
             const now = new Date();
             currentFilter = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             document.querySelectorAll('.calendar-grid div').forEach(el => el.classList.remove('selected-day'));
-            event.target.classList.add('selected-day');
+            element.classList.add('selected-day');
             document.getElementById('clear-btn').classList.remove('hidden');
             loadNotes();
         }
@@ -203,7 +213,7 @@
             if (currentFilter) query = query.eq('event_date', currentFilter);
             const { data } = await query;
             if (data) document.getElementById('event-list').innerHTML = data.map(n => `
-                <div class="p-3 bg-black/40 rounded border-l border-yellow-600/30 text-[10px] italic mb-3">
+                <div class="p-3 bg-black/40 rounded border-l border-yellow-600/30 text-[11px] italic mb-2">
                     <p class="opacity-30 text-[7px] uppercase tracking-widest mb-1 not-italic font-bold">${new Date(n.created_at).toLocaleDateString()}</p>
                     "${n.title}"
                 </div>
@@ -218,7 +228,24 @@
             if (!error) { input.value = ''; loadNotes(); }
         }
 
-        updateClock(); renderCalendar(); loadNotes(); fetchWeather();
+        function calculateMoonPhase() {
+            const lp = 2551443; const now = new Date(); const new_moon = new Date(1970, 0, 7, 20, 35, 0);
+            const phase = ((now.getTime() - new_moon.getTime()) / 1000) % lp;
+            const res = Math.floor(phase / (24 * 3600));
+            let icon = "🌑"; let name = "New Moon"; let tip = "Rest and plan your garden.";
+            if (res > 1 && res <= 6) { icon = "🌒"; name = "Waxing Crescent"; tip = "Sow seeds for leafy greens."; }
+            else if (res > 6 && res <= 9) { icon = "🌓"; name = "First Quarter"; tip = "Plant above-ground crops now."; }
+            else if (res > 9 && res <= 13) { icon = "🌔"; name = "Waxing Gibbous"; tip = "Fertilize and support growth."; }
+            else if (res > 13 && res <= 16) { icon = "🌕"; name = "Full Moon"; tip = "Harvest herbs and root crops."; }
+            else if (res > 16 && res <= 20) { icon = "🌖"; name = "Waning Gibbous"; tip = "Prune and transplant."; }
+            else if (res > 20 && res <= 23) { icon = "🌗"; name = "Last Quarter"; tip = "Focus on weeding and pests."; }
+            else if (res > 23) { icon = "🌘"; name = "Waning Crescent"; tip = "Prepare soil for the cycle."; }
+            document.getElementById('moon-icon').innerText = icon;
+            document.getElementById('moon-phase-name').innerText = name;
+            document.getElementById('planting-tip').innerText = tip;
+        }
+
+        updateClock(); renderCalendar(); loadNotes(); fetchWeather(); calculateMoonPhase();
         setInterval(updateClock, 1000); setInterval(fetchWeather, 600000);
         _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'magical_events' }, loadNotes).subscribe();
     </script>
