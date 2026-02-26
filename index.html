@@ -26,36 +26,36 @@
             width: 38%; height: 100%; overflow-y: auto;
             background: linear-gradient(145deg, #0D1310 0%, #050807 100%);
             border-right: 4px solid; border-image: linear-gradient(to bottom, var(--gold), #8A6D3B, var(--gold)) 1;
-            padding: 2.5rem 1rem; z-index: 20; position: relative;
+            padding: 2.5rem 1.5rem; z-index: 20; position: relative;
             scrollbar-width: thin; scrollbar-color: var(--gold) transparent;
             box-shadow: 25px 0 60px var(--deep-shadow);
         }
 
         .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
+        /* HEAVY HEADERS - FIXED OVERFLOW */
+        .title-container { width: 100%; display: flex; justify-content: center; overflow: visible; }
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            letter-spacing: 0.01em; font-size: 2.1rem !important; line-height: 1.1;
+            letter-spacing: 0.01em; font-size: 2.2rem !important; line-height: 1.2;
             background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
-            width: 100%; margin-bottom: 0.5rem; display: block; text-align: center;
+            flex-shrink: 0;
         }
 
-        h2, h3, .gold-text { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.1em; }
+        h2, h3, .gold-text { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .artifact-card { background: rgba(13, 19, 16, 0.9); border: 1px solid rgba(212, 175, 55, 0.2); padding: 1.5rem; margin-bottom: 2rem; border-radius: 2px; box-shadow: 0 15px 35px var(--deep-shadow); }
 
+        /* NUMBERS & CLOCK */
         #current-time { color: var(--gold-bright); font-weight: 900; filter: drop-shadow(0 0 5px var(--gold)); }
-        .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.05); font-size: 0.8rem; cursor: pointer; color: var(--parchment); font-weight: 700; background: rgba(0,0,0,0.2); transition: 0.3s; }
+        .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.05); font-size: 0.8rem; cursor: pointer; color: var(--parchment); font-weight: 700; background: rgba(0,0,0,0.2); }
         .calendar-grid div:hover { background: var(--gold); color: #050807 !important; }
         
         .today { background: rgba(212, 175, 55, 0.3) !important; border: 2px solid var(--gold) !important; color: var(--gold-bright) !important; box-shadow: 0 0 15px var(--gold); }
         .has-ritual { border: 1.5px solid var(--magic-purple) !important; box-shadow: inset 0 0 12px var(--magic-purple) !important; }
-        .selected-day { border: 2px solid var(--gold-bright) !important; transform: scale(1.05); z-index: 10; }
-
-        .delete-btn { color: #ff4d4d; opacity: 0.4; transition: 0.3s; cursor: pointer; }
-        .delete-btn:hover { opacity: 1; transform: scale(1.2); }
+        .selected-day { border: 2.5px solid var(--gold-bright) !important; transform: scale(1.05); z-index: 10; }
 
         .ui-panel::-webkit-scrollbar { width: 4px; }
         .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
@@ -65,15 +65,13 @@
 
     <div class="wrapper">
         <section class="ui-panel">
-            <header class="mb-10 text-center">
+            <header class="mb-10 title-container">
                 <h1>MoonsCalendar</h1>
-                <p class="text-[8px] tracking-[0.5em] text-yellow-600 font-bold uppercase mt-2">The Grimoire | Farmington MS</p>
             </header>
+            <p class="text-[8px] tracking-[0.5em] text-center text-yellow-600 font-bold uppercase -mt-8 mb-10">Grimoire | Farmington MS</p>
 
             <div class="artifact-card flex items-center gap-6">
-                <div id="w-icon-container" class="filter drop-shadow(0 0 10px var(--gold))">
-                    <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i>
-                </div>
+                <div id="w-icon-container"><i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i></div>
                 <div class="flex-grow text-right">
                     <span id="current-temp" class="text-4xl font-black gold-text">--°</span>
                     <p id="current-time" class="text-lg">--:-- --</p>
@@ -82,10 +80,10 @@
 
             <div id="appt-form" class="artifact-card hidden border-purple-500/50 relative">
                 <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40 hover:opacity-100 transition">✕</button>
-                <h3 class="text-[10px] mb-4 flex justify-between font-bold">Ritual for: <span id="target-date-display" class="text-purple-400">--</span></h3>
+                <h3 class="text-[10px] mb-4 flex justify-between font-bold">Inscribing Ritual: <span id="target-date-display" class="text-purple-400">--</span></h3>
                 <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b border-purple-500 p-2 text-sm mb-4 outline-none italic text-parchment">
                 <input type="time" id="appt-time" class="w-full bg-black/40 border-b border-purple-500 p-2 text-sm mb-4 outline-none text-purple-200">
-                <button onclick="saveAppointment()" class="w-full bg-purple-900/20 border border-purple-500 py-3 text-[9px] uppercase tracking-widest font-black hover:bg-purple-900/40 transition">Seal Ritual</button>
+                <button onclick="saveAppointment()" class="w-full bg-purple-900/20 border border-purple-500 py-3 text-[9px] uppercase tracking-widest font-black hover:bg-purple-900/40">Seal Ritual</button>
             </div>
 
             <div class="artifact-card">
@@ -126,12 +124,14 @@
         }
 
         async function initData() {
-            const { data, error } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
-            if (error) { console.error("Database Error:", error); return; }
-            allAppointments = data || [];
-            renderCalendar();
-            if (selectedDate) loadDayAppointments();
-            fetchWeather();
+            try {
+                const { data, error } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
+                if (error) throw error;
+                allAppointments = data || [];
+                renderCalendar();
+                if (selectedDate) loadDayAppointments();
+                fetchWeather();
+            } catch (e) { console.error("Data Load Error:", e); }
         }
 
         function renderCalendar() {
@@ -175,7 +175,7 @@
             const event_time = document.getElementById('appt-time').value;
             if(!title) return;
             const { error } = await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time }]);
-            if (error) { console.error("Save Error:", error); return; }
+            if (error) { alert("Save Failed: Check column names in DB"); console.error(error); return; }
             document.getElementById('appt-input').value = '';
             await initData();
         }
@@ -185,7 +185,7 @@
             document.getElementById('appt-list').innerHTML = filtered.map(a => `
                 <div class="flex justify-between items-center p-3 bg-purple-900/10 border-l-2 border-purple-500 text-xs shadow-xl">
                     <span><span class="text-purple-400 font-black mr-2">${a.event_time || ''}</span> ${a.title}</span>
-                    <i data-lucide="trash-2" class="w-3 h-3 delete-btn" onclick="deleteAppt('${a.id}')"></i>
+                    <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-50 hover:opacity-100">✕</button>
                 </div>
             `).join('');
             lucide.createIcons();
