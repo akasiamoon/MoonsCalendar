@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonsCalendar | Farmington MS</title>
+    <title>MoonsCalendar | Farmington MS Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -25,10 +25,10 @@
 </head>
 <body class="min-h-screen p-4 md:p-8">
 
-    <header class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-        <div class="text-center md:text-left">
+    <header class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center mb-8 gap-4 text-center md:text-left">
+        <div>
             <h1 class="text-3xl md:text-5xl font-bold tracking-tighter">MoonsCalendar</h1>
-            <p class="italic opacity-80 text-sm mt-1 uppercase tracking-widest">Farmington Edition | Whispers & Wonders</p>
+            <p class="italic opacity-80 text-sm mt-1 uppercase tracking-widest">Collector's Edition | Whispers & Wonders</p>
         </div>
 
         <div id="weather-widget" class="glass-panel gold-border p-4 rounded-xl flex items-center gap-6 min-w-[300px]">
@@ -47,7 +47,7 @@
     <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8">
         <aside class="md:col-span-3 space-y-6">
             <div class="glass-panel gold-border p-6 rounded-lg text-center">
-                <h3 class="gold-text mb-4 text-lg">Moon Phase</h3>
+                <h3 class="gold-text mb-4 text-lg font-bold uppercase tracking-widest">Moon Phase</h3>
                 <div id="moon-icon" class="text-6xl mb-2">🌑</div>
                 <p id="moon-phase-name" class="italic text-sm">Calculating...</p>
                 <hr class="my-4 border-yellow-600/20">
@@ -63,7 +63,7 @@
                 <div class="flex justify-between items-center mb-6">
                     <h2 id="calendar-month" class="text-2xl uppercase tracking-widest text-gold font-bold"></h2>
                 </div>
-                <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-bold opacity-40 mb-4 tracking-widest">
+                <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-bold opacity-40 mb-4 tracking-widest uppercase">
                     <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
                 </div>
                 <div id="calendar-days" class="grid grid-cols-7 gap-2 calendar-grid"></div>
@@ -76,7 +76,7 @@
                     <i data-lucide="scroll" class="w-4 h-4"></i> Inscribed Notes
                 </h3>
                 <div id="event-list" class="space-y-3 mb-6 overflow-y-auto flex-grow max-h-[350px] pr-2">
-                    <p class="text-xs opacity-40 italic">No whispers found...</p>
+                    <p class="text-xs opacity-40 italic text-center mt-10">The scroll is empty...</p>
                 </div>
                 <div class="mt-auto pt-4 border-t border-yellow-600/20">
                     <input type="text" id="note-input" placeholder="Speak to the scroll..." 
@@ -98,7 +98,7 @@
         
         lucide.createIcons();
 
-        // --- 2. THE CLOCK (FIXED) ---
+        // --- 2. TIME & DATE ---
         function updateClock() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -108,23 +108,16 @@
             document.getElementById('current-date').innerText = dateStr;
         }
 
-        // --- 3. WEATHER (FARMINGTON FIX) ---
+        // --- 3. WEATHER (FARMINGTON MS) ---
         async function fetchWeather() {
             try {
-                // We'll use Farmington, MS, US specifically
                 const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Farmington,MS,US&units=imperial&appid=${W_KEY}`);
                 const data = await res.json();
-                
                 if(data.main) {
                     document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
                     document.getElementById('weather-desc').innerText = data.weather[0].description;
-                } else {
-                    document.getElementById('weather-desc').innerText = "Location Error";
                 }
-            } catch (e) { 
-                console.error("Weather error:", e);
-                document.getElementById('weather-desc').innerText = "API Offline";
-            }
+            } catch (e) { console.error("Weather error:", e); }
         }
 
         // --- 4. CALENDAR RENDER ---
@@ -138,13 +131,11 @@
             const lastDate = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
             grid.innerHTML = "";
-            // Padding for empty days
             for (let i = 0; i < firstDay; i++) {
                 const empty = document.createElement('div');
                 empty.className = "opacity-0";
                 grid.appendChild(empty);
             }
-            // Real days
             for (let i = 1; i <= lastDate; i++) {
                 const day = document.createElement('div');
                 day.innerText = i;
@@ -153,22 +144,41 @@
             }
         }
 
-        // --- 5. SUPABASE REALTIME SYNC ---
-        async function loadNotes() {
-            const { data, error } = await _supabase.from('magical_events').select('*').order('created_at', { ascending: false });
-            const list = document.getElementById('event-list');
+        // --- 5. LUNAR LOGIC (ALMANAC) ---
+        function calculateMoonPhase() {
+            const date = new Date();
+            const lp = 2551443; 
+            const now = new Date();
+            const new_moon = new Date(1970, 0, 7, 20, 35, 0);
+            const phase = ((now.getTime() - new_moon.getTime()) / 1000) % lp;
+            const res = Math.floor(phase / (24 * 3600));
             
+            let icon = "🌑"; let name = "New Moon"; let tip = "Rest and plan your garden.";
+
+            if (res > 1 && res <= 6) { icon = "🌒"; name = "Waxing Crescent"; tip = "Sow seeds for leafy greens."; }
+            else if (res > 6 && res <= 9) { icon = "🌓"; name = "First Quarter"; tip = "Plant above-ground crops now."; }
+            else if (res > 9 && res <= 13) { icon = "🌔"; name = "Waxing Gibbous"; tip = "Fertilize and support growth."; }
+            else if (res > 13 && res <= 16) { icon = "🌕"; name = "Full Moon"; tip = "Harvest herbs and root crops."; }
+            else if (res > 16 && res <= 20) { icon = "🌖"; name = "Waning Gibbous"; tip = "Prune and transplant."; }
+            else if (res > 20 && res <= 23) { icon = "🌗"; name = "Last Quarter"; tip = "Focus on weeding and pests."; }
+            else if (res > 23) { icon = "🌘"; name = "Waning Crescent"; tip = "Prepare soil for the next cycle."; }
+
+            document.getElementById('moon-icon').innerText = icon;
+            document.getElementById('moon-phase-name').innerText = name;
+            document.getElementById('planting-tip').innerText = tip;
+        }
+
+        // --- 6. SUPABASE REALTIME SYNC ---
+        async function loadNotes() {
+            const { data } = await _supabase.from('magical_events').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('event-list');
             if (data && data.length > 0) {
                 list.innerHTML = data.map(n => `
                     <div class="p-3 bg-black/40 rounded border-l-2 border-yellow-600 text-sm shadow-xl">
-                        <p class="opacity-30 text-[8px] uppercase tracking-widest mb-1 font-bold">
-                            ${new Date(n.created_at).toLocaleDateString()}
-                        </p>
+                        <p class="opacity-30 text-[8px] uppercase tracking-widest mb-1 font-bold">${new Date(n.created_at).toLocaleDateString()}</p>
                         <p class="gold-text opacity-90">${n.title}</p>
                     </div>
                 `).join('');
-            } else {
-                list.innerHTML = `<p class="text-xs opacity-40 italic text-center mt-10">The scroll is empty...</p>`;
             }
         }
 
@@ -176,55 +186,22 @@
             const input = document.getElementById('note-input');
             const val = input.value.trim();
             if(!val) return;
-            
             const { error } = await _supabase.from('magical_events').insert([{ title: val, event_date: new Date().toISOString() }]);
-            if (!error) { 
-                input.value = ''; 
-                loadNotes(); 
-            } else {
-                alert("The ink didn't dry. Try again!");
-            }
+            if (!error) { input.value = ''; loadNotes(); }
         }
-// --- 6. LUNAR LOGIC (ALMANAC) ---
-function calculateMoonPhase() {
-    const date = new Date();
-    const lp = 2551443; 
-    const now = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-    const new_moon = new Date(1970, 0, 7, 20, 35, 0);
-    const phase = ((now.getTime() - new_moon.getTime()) / 1000) % lp;
-    const res = Math.floor(phase / (24 * 3600));
-    
-    let icon = "🌑";
-    let name = "New Moon";
-    let tip = "Rest and plan your garden.";
 
-    if (res > 1 && res <= 6) { icon = "🌒"; name = "Waxing Crescent"; tip = "Sow seeds for leafy greens."; }
-    else if (res > 6 && res <= 9) { icon = "🌓"; name = "First Quarter"; tip = "Plant above-ground crops now."; }
-    else if (res > 9 && res <= 13) { icon = "🌔"; name = "Waxing Gibbous"; tip = "Fertilize and support growth."; }
-    else if (res > 13 && res <= 16) { icon = "🌕"; name = "Full Moon"; tip = "Harvest herbs and root crops."; }
-    else if (res > 16 && res <= 20) { icon = "🌖"; name = "Waning Gibbous"; tip = "Prune and transplant."; }
-    else if (res > 20 && res <= 23) { icon = "🌗"; name = "Last Quarter"; tip = "Focus on weeding and pests."; }
-    else if (res > 23) { icon = "🌘"; name = "Waning Crescent"; tip = "Prepare soil for the next cycle."; }
-
-    document.getElementById('moon-icon').innerText = icon;
-    document.getElementById('moon-phase-name').innerText = name;
-    document.getElementById('planting-tip').innerText = tip;
-}
         // --- INITIALIZE ---
         updateClock();
         renderCalendar();
         loadNotes();
         fetchWeather();
+        calculateMoonPhase();
 
-        // Refresh intervals
-        setInterval(updateClock, 1000); // Clock every second
-        setInterval(fetchWeather, 600000); // Weather every 10 mins
+        setInterval(updateClock, 1000);
+        setInterval(fetchWeather, 600000);
 
-        // Realtime Listener (Updates screen instantly when phone adds a note)
-        _supabase.channel('custom-all-channel')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'magical_events' }, (payload) => {
-            loadNotes();
-        })
+        _supabase.channel('magical-sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'magical_events' }, loadNotes)
         .subscribe();
     </script>
 </body>
