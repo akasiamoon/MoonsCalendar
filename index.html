@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonsCalendar | Final Shared Edition</title>
+    <title>MoonsCalendar | Spectral Nomad</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -50,10 +50,14 @@
         .has-ritual { border: 3px solid var(--magic-purple) !important; box-shadow: inset 0 0 10px var(--magic-purple); }
         .is-holiday { border: 3px solid var(--gold-bright) !important; background: rgba(251, 245, 183, 0.15) !important; }
         
-        canvas#seasonal-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 10; opacity: 0.7; }
+        /* SPECTRAL ANIMATION CANVAS */
+        canvas#seasonal-canvas { 
+            position: absolute; inset: 0; pointer-events: none; z-index: 10; 
+            filter: blur(1px); /* Ghostly blur */
+        }
+
         input, button, p, span { font-weight: 900 !important; }
-        
-        .purge-btn { color: #ff4d4d; border: 2px solid #ff4d4d; background: rgba(255, 77, 77, 0.1); padding: 10px; font-size: 10px; text-transform: uppercase; tracking-widest; width: 100%; margin-top: 1rem; transition: 0.3s; }
+        .purge-btn { color: #ff4d4d; border: 2px solid #ff4d4d; background: rgba(255, 77, 77, 0.1); padding: 10px; font-size: 10px; text-transform: uppercase; width: 100%; margin-top: 1rem; transition: 0.3s; }
         .purge-btn:hover { background: #ff4d4d; color: white; box-shadow: 0 0 20px #ff4d4d; }
     </style>
 </head>
@@ -144,15 +148,16 @@
         function initParticles() {
             canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight;
             particles = []; const month = currentDate.getMonth() + 1;
-            for(let i = 0; i < 20; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 25 + 15, speed: Math.random() * 0.8 + 0.3, type: month === 3 ? '🍀' : (month === 4 ? '🥚' : '✨'), rot: Math.random() * 360 });
+            for(let i = 0; i < 18; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 25 + 15, speed: Math.random() * 0.6 + 0.2, type: month === 3 ? '🍀' : (month === 4 ? '🥚' : '✨'), rot: Math.random() * 360, opacity: Math.random() * 0.2 + 0.1 });
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => {
-                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+                ctx.save(); ctx.globalAlpha = p.opacity; // TRANSLUCENT LOGIC
+                ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
                 ctx.font = `${p.size}px serif`; ctx.fillText(p.type, 0, 0); ctx.restore();
-                p.y -= p.speed; p.rot += 0.5; if(p.y < -50) p.y = canvas.height + 50;
+                p.y -= p.speed; p.rot += 0.3; if(p.y < -50) p.y = canvas.height + 50;
             });
             requestAnimationFrame(draw);
         }
