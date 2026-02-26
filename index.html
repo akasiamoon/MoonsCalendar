@@ -16,7 +16,6 @@
             --gold-bright: #FBF5B7;
             --parchment: #E6D5B8;
             --magic-purple: #9b4dff;
-            --holiday-gold: rgba(251, 245, 183, 0.5);
             --deep-shadow: rgba(0, 0, 0, 0.98);
         }
 
@@ -34,7 +33,8 @@
 
         .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
-        .title-container { width: 100%; text-align: center; margin-bottom: 3rem; }
+        /* HEAVY HEADERS */
+        .title-container { width: 100%; text-align: center; margin-bottom: 2rem; }
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
             letter-spacing: 0.02em; font-size: 2.3rem !important; line-height: 1;
@@ -48,36 +48,29 @@
 
         .artifact-card { 
             background: rgba(13, 19, 16, 0.95); border: 1px solid rgba(212, 175, 55, 0.3); 
-            padding: 2rem; margin-bottom: 2rem; border-radius: 2px;
+            padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 2px;
             box-shadow: 0 20px 40px var(--deep-shadow), inset 0 0 25px rgba(0,0,0,0.7);
         }
 
-        /* CALENDAR STYLE */
-        .calendar-grid div { 
-            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
-            border: 1px solid rgba(212, 175, 55, 0.15); font-size: 0.9rem; cursor: pointer; 
-            color: var(--parchment); font-weight: 900; background: rgba(0,0,0,0.4); transition: 0.3s; 
-            position: relative;
-        }
-        .calendar-grid div:hover { background: var(--gold); color: #000 !important; box-shadow: 0 0 30px var(--gold); }
-        
-        /* THE VARIOUS GLOWS */
+        /* IDENTITY SHRINE */
+        .avatar-btn { font-size: 1.5rem; opacity: 0.3; transition: 0.3s; cursor: pointer; filter: grayscale(1); }
+        .avatar-btn.selected { opacity: 1; filter: grayscale(0) drop-shadow(0 0 8px var(--gold)); transform: scale(1.2); }
+
+        /* CALENDAR GLOWS */
+        .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.15); font-size: 0.9rem; cursor: pointer; font-weight: 900; background: rgba(0,0,0,0.4); transition: 0.3s; }
+        .calendar-grid div:hover { background: var(--gold); color: #000 !important; }
         .today { background: rgba(212, 175, 55, 0.3) !important; border: 2.5px solid var(--gold) !important; color: #fff !important; box-shadow: 0 0 15px var(--gold); }
         .has-ritual { border: 2px solid var(--magic-purple) !important; box-shadow: inset 0 0 12px var(--magic-purple) !important; }
-        .is-holiday { border: 2px solid var(--gold-bright) !important; background: rgba(251, 245, 183, 0.15) !important; }
-        .is-holiday::after { content: '✧'; position: absolute; top: 2px; right: 4px; font-size: 8px; color: var(--gold-bright); }
+        .is-holiday { border: 2px solid var(--gold-bright) !important; background: rgba(251, 245, 183, 0.1) !important; }
         .selected-day { border: 2px solid var(--gold-bright) !important; transform: scale(1.05); z-index: 10; }
 
         .nav-btn { cursor: pointer; transition: 0.3s; color: var(--gold); }
-        .nav-btn:hover { transform: scale(1.3); filter: drop-shadow(0 0 12px var(--gold-bright)); }
+        .nav-btn:hover { transform: scale(1.3); }
 
         .ui-panel::-webkit-scrollbar { width: 5px; }
         .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
 
-        @media (max-width: 1024px) {
-            .wrapper { flex-direction: column-reverse; }
-            .ui-panel, .art-panel { width: 100%; }
-        }
+        @media (max-width: 1024px) { .wrapper { flex-direction: column-reverse; } .ui-panel, .art-panel { width: 100%; } }
     </style>
 </head>
 <body>
@@ -86,8 +79,20 @@
         <section class="ui-panel">
             <header class="title-container">
                 <h1>MoonsCalendar</h1>
-                <p class="text-[9px] tracking-[0.7em] text-yellow-600 font-black uppercase mt-4">Sacred Grimoire | Farmington MS</p>
+                <p class="text-[8px] tracking-[0.5em] text-yellow-600 font-black uppercase mt-2">Sacred Grimoire | Farmington MS</p>
             </header>
+
+            <div class="artifact-card text-center">
+                <div class="flex justify-center gap-4 mb-4">
+                    <span class="avatar-btn selected" onclick="setAvatar('🔮', this)">🔮</span>
+                    <span class="avatar-btn" onclick="setAvatar('🐺', this)">🐺</span>
+                    <span class="avatar-btn" onclick="setAvatar('🌿', this)">🌿</span>
+                    <span class="avatar-btn" onclick="setAvatar('💀', this)">💀</span>
+                    <span class="avatar-btn" onclick="setAvatar('🌙', this)">🌙</span>
+                    <span class="avatar-btn" onclick="setAvatar('⚔️', this)">⚔️</span>
+                </div>
+                <input type="text" id="userName" placeholder="Your Name..." value="Amber" class="w-full bg-transparent border-b border-yellow-600/30 p-1 text-center text-sm italic font-black outline-none placeholder-yellow-900/50">
+            </div>
 
             <div class="artifact-card flex items-center justify-between">
                 <div class="flex items-center gap-4">
@@ -102,161 +107,14 @@
 
             <div id="appt-form" class="artifact-card hidden border-purple-500/50 relative">
                 <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40">✕</button>
-                <h3 class="text-[10px] mb-4 font-black">Inscribe for: <span id="target-date-display" class="text-purple-400">--</span></h3>
-                <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-4 outline-none italic font-black">
+                <h3 class="text-[10px] mb-4 font-black uppercase tracking-widest">Seal Ritual</h3>
+                <input type="text" id="appt-input" placeholder="What cycle begins?..." class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-4 outline-none italic font-black text-parchment">
                 <input type="time" id="appt-time" class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-6 outline-none text-purple-200">
-                <button onclick="saveAppointment()" class="w-full bg-purple-900/40 border-2 border-purple-500 py-3 text-[10px] uppercase font-black">Seal Ritual</button>
+                <button onclick="saveAppointment()" class="w-full bg-purple-900/40 border-2 border-purple-500 py-3 text-[10px] uppercase font-black hover:bg-purple-900/60 transition">Seal In Time</button>
             </div>
 
             <div class="artifact-card">
                 <div class="flex justify-between items-center mb-8">
                     <i data-lucide="arrow-left-circle" class="nav-btn w-6 h-6" onclick="changeMonth(-1)"></i>
-                    <h2 id="calendar-month" class="text-sm tracking-[0.5em] font-black gold-text"></h2>
-                    <i data-lucide="arrow-right-circle" class="nav-btn w-6 h-6" onclick="changeMonth(1)"></i>
-                </div>
-                <div class="grid grid-cols-7 gap-1 text-center text-[10px] opacity-40 mb-4 font-black uppercase tracking-widest">
-                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                </div>
-                <div id="calendar-days" class="grid grid-cols-7 gap-1 calendar-grid"></div>
-            </div>
-
-            <div class="artifact-card min-h-[150px]">
-                <h3 class="text-[10px] mb-4 text-purple-400 font-black uppercase tracking-widest">Active Rituals</h3>
-                <div id="appt-list" class="space-y-4"></div>
-            </div>
-        </section>
-        <section class="art-panel"></section>
-    </div>
-
-    <script>
-        const SB_URL = 'https://qgppnxpezkqfqdcazrol.supabase.co';
-        const SB_KEY = 'sb_publishable_aHS858clyUkvMHC3KH-HGQ_kSx1XJ3X';
-        const W_KEY = '88f3e35af62ba59bad38a3d346e0ca84';
-        const _supabase = supabase.createClient(SB_URL, SB_KEY);
-        
-        let currentDate = new Date();
-        let selectedDate = null;
-        let allAppointments = [];
-
-        // ALMANAC HOLIDAYS
-        const holidays = {
-            "2-2": "Imbolc",
-            "2-14": "Valentine's Day",
-            "2-16": "Presidents' Day",
-            "3-8": "DST Begins",
-            "3-17": "St. Patrick's Day",
-            "3-20": "Vernal Equinox",
-            "4-5": "Easter"
-        };
-
-        function updateClock() {
-            document.getElementById('current-time').innerText = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-        }
-
-        async function fetchWeather() {
-            try {
-                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Farmington,MS,US&units=imperial&appid=${W_KEY}`);
-                const data = await res.json();
-                if(data.main) {
-                    document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        async function initData() {
-            const { data } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
-            allAppointments = data || [];
-            renderCalendar();
-            fetchWeather();
-            lucide.createIcons();
-        }
-
-        function renderCalendar() {
-            const grid = document.getElementById('calendar-days');
-            const viewMonth = currentDate.getMonth();
-            const viewYear = currentDate.getFullYear();
-            const today = new Date();
-
-            document.getElementById('calendar-month').innerText = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-            const first = new Date(viewYear, viewMonth, 1).getDay();
-            const last = new Date(viewYear, viewMonth + 1, 0).getDate();
-            
-            grid.innerHTML = "";
-            for (let i = 0; i < first; i++) grid.appendChild(document.createElement('div')).className="opacity-0 cursor-default";
-            
-            for (let i = 1; i <= last; i++) {
-                const d = document.createElement('div');
-                const dateKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                const holidayKey = `${viewMonth + 1}-${i}`;
-                
-                d.innerText = i;
-                if (i === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()) d.classList.add('today');
-                if (allAppointments.some(a => a.event_date === dateKey)) d.classList.add('has-ritual');
-                if (holidays[holidayKey]) {
-                    d.classList.add('is-holiday');
-                    d.title = holidays[holidayKey];
-                }
-                
-                d.onclick = (e) => selectDay(dateKey, e.target);
-                grid.appendChild(d);
-            }
-        }
-
-        function changeMonth(dir) {
-            currentDate.setMonth(currentDate.getMonth() + dir);
-            renderCalendar();
-        }
-
-        function selectDay(date, el) {
-            selectedDate = date;
-            document.querySelectorAll('.calendar-grid div').forEach(div => div.classList.remove('selected-day'));
-            el.classList.add('selected-day');
-            document.getElementById('target-date-display').innerText = date;
-            document.getElementById('appt-form').classList.remove('hidden');
-            loadDayAppointments();
-        }
-
-        function hideApptForm() { 
-            document.getElementById('appt-form').classList.add('hidden');
-            document.querySelectorAll('.calendar-grid div').forEach(div => div.classList.remove('selected-day'));
-        }
-
-        async function saveAppointment() {
-            const title = document.getElementById('appt-input').value;
-            const event_time = document.getElementById('appt-time').value;
-            if(!title || !selectedDate) return;
-            await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time: event_time || null }]);
-            document.getElementById('appt-input').value = '';
-            await initData();
-        }
-
-        function loadDayAppointments() {
-            const filtered = allAppointments.filter(a => a.event_date === selectedDate);
-            const viewMonth = new Date(selectedDate).getMonth() + 1;
-            const viewDay = new Date(selectedDate).getDate() + 1; // Correction for Date object behavior
-            const holiday = holidays[`${viewMonth}-${viewDay}`];
-
-            let html = filtered.map(a => `
-                <div class="flex justify-between items-center p-3 bg-purple-900/10 border-l-4 border-purple-500 text-xs shadow-xl mb-2 font-black">
-                    <span><span class="text-purple-400 mr-2">${a.event_time || ''}</span> ${a.title}</span>
-                    <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-60">✕</button>
-                </div>
-            `).join('');
-
-            if (holiday) {
-                html = `<div class="p-3 bg-yellow-900/20 border-l-4 border-yellow-500 text-xs shadow-xl mb-4 gold-text italic font-black">✧ ${holiday}</div>` + html;
-            }
-
-            document.getElementById('appt-list').innerHTML = html || '<p class="text-[10px] opacity-40 italic">No rituals inscribed for this day.</p>';
-        }
-
-        async function deleteAppt(id) {
-            await _supabase.from('appointments').delete().eq('id', id);
-            await initData();
-        }
-
-        updateClock(); initData(); setInterval(updateClock, 1000);
-        _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, initData).subscribe();
-    </script>
-</body>
-</html>
+                    <h2 id="calendar-month" class="text-sm tracking-[0.5em] font-black gold-text border-b border-yellow-600/20 pb-2"></h2>
+                    <i data-lucide="arrow-right-circle" class="nav-btn w-6 h-6" onclick="
