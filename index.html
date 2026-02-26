@@ -33,7 +33,7 @@
 
         .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
-        /* HEAVY HEADERS */
+        /* HEAVY EMBOSSED HEADERS */
         .title-container { width: 100%; text-align: center; margin-bottom: 2rem; }
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
@@ -44,7 +44,12 @@
             display: inline-block;
         }
 
-        h2, h3, .gold-text { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.12em; }
+        h2, h3, .gold-text { 
+            font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
+            background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            letter-spacing: 0.12em;
+        }
 
         .artifact-card { 
             background: rgba(13, 19, 16, 0.95); border: 1px solid rgba(212, 175, 55, 0.3); 
@@ -52,20 +57,25 @@
             box-shadow: 0 20px 40px var(--deep-shadow), inset 0 0 25px rgba(0,0,0,0.7);
         }
 
-        /* IDENTITY SHRINE */
+        /* IDENTITY SHRINE STYLE */
         .avatar-btn { font-size: 1.5rem; opacity: 0.3; transition: 0.3s; cursor: pointer; filter: grayscale(1); }
-        .avatar-btn.selected { opacity: 1; filter: grayscale(0) drop-shadow(0 0 8px var(--gold)); transform: scale(1.2); }
+        .avatar-btn.selected { opacity: 1; filter: grayscale(0) drop-shadow(0 0 10px var(--gold)); transform: scale(1.2); }
 
-        /* CALENDAR GLOWS */
-        .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.15); font-size: 0.9rem; cursor: pointer; font-weight: 900; background: rgba(0,0,0,0.4); transition: 0.3s; }
-        .calendar-grid div:hover { background: var(--gold); color: #000 !important; }
+        /* CALENDAR NUMBERS */
+        .calendar-grid div { 
+            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
+            border: 1px solid rgba(212, 175, 55, 0.15); font-size: 0.9rem; cursor: pointer; 
+            color: var(--parchment); font-weight: 900; background: rgba(0,0,0,0.4); transition: 0.3s; 
+        }
+        .calendar-grid div:hover { background: var(--gold); color: #000 !important; box-shadow: 0 0 30px var(--gold); }
+        
         .today { background: rgba(212, 175, 55, 0.3) !important; border: 2.5px solid var(--gold) !important; color: #fff !important; box-shadow: 0 0 15px var(--gold); }
         .has-ritual { border: 2px solid var(--magic-purple) !important; box-shadow: inset 0 0 12px var(--magic-purple) !important; }
         .is-holiday { border: 2px solid var(--gold-bright) !important; background: rgba(251, 245, 183, 0.1) !important; }
         .selected-day { border: 2px solid var(--gold-bright) !important; transform: scale(1.05); z-index: 10; }
 
         .nav-btn { cursor: pointer; transition: 0.3s; color: var(--gold); }
-        .nav-btn:hover { transform: scale(1.3); }
+        .nav-btn:hover { transform: scale(1.3); filter: drop-shadow(0 0 12px var(--gold-bright)); }
 
         .ui-panel::-webkit-scrollbar { width: 5px; }
         .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
@@ -79,19 +89,19 @@
         <section class="ui-panel">
             <header class="title-container">
                 <h1>MoonsCalendar</h1>
-                <p class="text-[8px] tracking-[0.5em] text-yellow-600 font-black uppercase mt-2">Sacred Grimoire | Farmington MS</p>
+                <p class="text-[8px] tracking-[0.7em] text-yellow-600 font-black uppercase mt-2">Sacred Grimoire | Farmington MS</p>
             </header>
 
             <div class="artifact-card text-center">
                 <div class="flex justify-center gap-4 mb-4">
-                    <span class="avatar-btn selected" onclick="setAvatar('🔮', this)">🔮</span>
-                    <span class="avatar-btn" onclick="setAvatar('🐺', this)">🐺</span>
-                    <span class="avatar-btn" onclick="setAvatar('🌿', this)">🌿</span>
-                    <span class="avatar-btn" onclick="setAvatar('💀', this)">💀</span>
-                    <span class="avatar-btn" onclick="setAvatar('🌙', this)">🌙</span>
-                    <span class="avatar-btn" onclick="setAvatar('⚔️', this)">⚔️</span>
+                    <span class="avatar-btn selected" data-sigil="🔮" onclick="setAvatar('🔮', this)">🔮</span>
+                    <span class="avatar-btn" data-sigil="🐺" onclick="setAvatar('🐺', this)">🐺</span>
+                    <span class="avatar-btn" data-sigil="🌿" onclick="setAvatar('🌿', this)">🌿</span>
+                    <span class="avatar-btn" data-sigil="💀" onclick="setAvatar('💀', this)">💀</span>
+                    <span class="avatar-btn" data-sigil="🌙" onclick="setAvatar('🌙', this)">🌙</span>
+                    <span class="avatar-btn" data-sigil="⚔️" onclick="setAvatar('⚔️', this)">⚔️</span>
                 </div>
-                <input type="text" id="userName" placeholder="Your Name..." value="Amber" class="w-full bg-transparent border-b border-yellow-600/30 p-1 text-center text-sm italic font-black outline-none placeholder-yellow-900/50">
+                <input type="text" id="userName" placeholder="Your Name..." onchange="saveIdentity()" class="w-full bg-transparent border-b border-yellow-600/30 p-1 text-center text-sm italic font-black outline-none placeholder-yellow-900/50">
             </div>
 
             <div class="artifact-card flex items-center justify-between">
@@ -136,8 +146,8 @@
                 </h3>
                 <div id="whisper-list" class="space-y-5 overflow-y-auto flex-grow mb-6 pr-2 font-black italic"></div>
                 <div class="mt-auto">
-                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b-2 border-yellow-600/30 p-3 text-sm outline-none italic placeholder-yellow-900/50 font-black">
-                    <button onclick="addWhisper()" class="w-full mt-6 bg-yellow-900/30 border-2 border-yellow-600/40 py-4 text-[10px] uppercase font-black hover:bg-yellow-600/40 transition">Inscribe Whisper</button>
+                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b border-yellow-600/30 p-3 text-sm outline-none italic placeholder-yellow-900/50 font-black">
+                    <button onclick="addWhisper()" class="w-full mt-6 bg-yellow-900/20 border-2 border-yellow-600/40 py-4 text-[10px] uppercase font-black hover:bg-yellow-600/40 transition">Inscribe Whisper</button>
                 </div>
             </div>
         </section>
@@ -157,10 +167,29 @@
 
         const holidays = { "2-2": "Imbolc", "2-14": "Valentine's Day", "2-16": "Presidents' Day", "3-8": "DST Begins", "3-17": "St. Patrick's Day", "3-20": "Vernal Equinox", "4-5": "Easter" };
 
+        // IDENTITY STORAGE
+        function saveIdentity() {
+            const name = document.getElementById('userName').value;
+            localStorage.setItem('grimoire_name', name);
+            localStorage.setItem('grimoire_sigil', currentSigil);
+        }
+
+        function loadIdentity() {
+            const savedName = localStorage.getItem('grimoire_name') || 'Amber';
+            const savedSigil = localStorage.getItem('grimoire_sigil') || '🔮';
+            document.getElementById('userName').value = savedName;
+            currentSigil = savedSigil;
+            
+            document.querySelectorAll('.avatar-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.getAttribute('data-sigil') === savedSigil);
+            });
+        }
+
         function setAvatar(sigil, el) {
             currentSigil = sigil;
             document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
             el.classList.add('selected');
+            saveIdentity();
         }
 
         function updateClock() {
@@ -253,7 +282,7 @@
 
         async function deleteWhisper(id) { await _supabase.from('magical_events').delete().eq('id', id); loadWhispers(); }
 
-        updateClock(); initData(); setInterval(updateClock, 1000);
+        loadIdentity(); updateClock(); initData(); setInterval(updateClock, 1000);
         _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, initData).subscribe();
     </script>
 </body>
