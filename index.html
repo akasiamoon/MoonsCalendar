@@ -16,13 +16,13 @@
             --gold-bright: #FBF5B7;
             --parchment: #E6D5B8;
             --magic-purple: #9b4dff;
+            --holiday-gold: rgba(251, 245, 183, 0.5);
             --deep-shadow: rgba(0, 0, 0, 0.98);
         }
 
         body, html { height: 100%; margin: 0; padding: 0; background-color: #050807; color: var(--parchment); font-family: 'Quattrocento', serif; overflow: hidden; }
         .wrapper { display: flex; height: 100vh; width: 100vw; }
         
-        /* HEAVY ARTIFACT PANEL */
         .ui-panel {
             width: 38%; height: 100%; overflow-y: auto;
             background: linear-gradient(145deg, #0D1310 0%, #050807 100%);
@@ -34,7 +34,6 @@
 
         .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
-        /* HEAVY EMBOSSED HEADERS */
         .title-container { width: 100%; text-align: center; margin-bottom: 3rem; }
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
@@ -45,12 +44,7 @@
             display: inline-block;
         }
 
-        h2, h3, .gold-text { 
-            font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            letter-spacing: 0.12em;
-        }
+        h2, h3, .gold-text { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.12em; }
 
         .artifact-card { 
             background: rgba(13, 19, 16, 0.95); border: 1px solid rgba(212, 175, 55, 0.3); 
@@ -58,29 +52,27 @@
             box-shadow: 0 20px 40px var(--deep-shadow), inset 0 0 25px rgba(0,0,0,0.7);
         }
 
-        /* WEATHER SHRINE */
-        .weather-display { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
-        #current-temp { font-size: 2.4rem; font-weight: 900; color: var(--gold-bright); filter: drop-shadow(0 0 8px var(--gold)); }
-        #current-time { color: var(--gold-bright); font-weight: 900; font-size: 1.3rem; filter: drop-shadow(0 0 5px var(--gold)); }
-        .weather-desc { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.3em; color: var(--gold); font-weight: 900; }
-        
-        /* AGED CALENDAR NAVIGATION */
+        /* CALENDAR STYLE */
         .calendar-grid div { 
             aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
             border: 1px solid rgba(212, 175, 55, 0.15); font-size: 0.9rem; cursor: pointer; 
             color: var(--parchment); font-weight: 900; background: rgba(0,0,0,0.4); transition: 0.3s; 
+            position: relative;
         }
         .calendar-grid div:hover { background: var(--gold); color: #000 !important; box-shadow: 0 0 30px var(--gold); }
         
+        /* THE VARIOUS GLOWS */
         .today { background: rgba(212, 175, 55, 0.3) !important; border: 2.5px solid var(--gold) !important; color: #fff !important; box-shadow: 0 0 15px var(--gold); }
         .has-ritual { border: 2px solid var(--magic-purple) !important; box-shadow: inset 0 0 12px var(--magic-purple) !important; }
+        .is-holiday { border: 2px solid var(--gold-bright) !important; background: rgba(251, 245, 183, 0.15) !important; }
+        .is-holiday::after { content: '✧'; position: absolute; top: 2px; right: 4px; font-size: 8px; color: var(--gold-bright); }
         .selected-day { border: 2px solid var(--gold-bright) !important; transform: scale(1.05); z-index: 10; }
 
-        .nav-btn { cursor: pointer; transition: 0.3s; color: var(--gold); filter: drop-shadow(0 0 5px var(--gold)); }
+        .nav-btn { cursor: pointer; transition: 0.3s; color: var(--gold); }
         .nav-btn:hover { transform: scale(1.3); filter: drop-shadow(0 0 12px var(--gold-bright)); }
 
         .ui-panel::-webkit-scrollbar { width: 5px; }
-        .ui-panel::-webkit-scrollbar-thumb { background: linear-gradient(var(--gold), transparent, var(--gold)); border-radius: 10px; }
+        .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
 
         @media (max-width: 1024px) {
             .wrapper { flex-direction: column-reverse; }
@@ -97,60 +89,42 @@
                 <p class="text-[9px] tracking-[0.7em] text-yellow-600 font-black uppercase mt-4">Sacred Grimoire | Farmington MS</p>
             </header>
 
-            <div class="artifact-card">
-                <div class="weather-display">
-                    <div id="w-icon-container" class="filter drop-shadow(0 0 12px var(--gold))">
-                        <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i>
-                    </div>
-                    <div class="flex flex-col justify-center border-l-2 border-yellow-600/30 pl-6">
-                        <div class="flex items-center gap-4">
-                            <span id="current-temp" class="gold-text">--°</span>
-                            <div class="flex flex-col">
-                                <p id="current-time">--:-- --</p>
-                                <p id="weather-desc" class="weather-desc">Consulting Skies...</p>
-                            </div>
-                        </div>
-                    </div>
+            <div class="artifact-card flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div id="w-icon-container"><i data-lucide="cloud-sun" class="w-10 h-10 text-yellow-500"></i></div>
+                    <span id="current-temp" class="text-3xl font-black gold-text">--°</span>
+                </div>
+                <div class="text-right">
+                    <p id="current-time" class="font-black text-lg">--:-- --</p>
+                    <p id="weather-desc" class="text-[9px] tracking-widest uppercase opacity-60">Consulting Skies</p>
                 </div>
             </div>
 
             <div id="appt-form" class="artifact-card hidden border-purple-500/50 relative">
-                <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40 hover:opacity-100 transition">✕</button>
-                <h3 class="text-[10px] mb-6 flex justify-between font-black">Inscribing Ritual: <span id="target-date-display" class="text-purple-400">--</span></h3>
-                <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b-2 border-purple-500 p-3 text-sm mb-6 outline-none italic text-parchment font-black">
-                <input type="time" id="appt-time" class="w-full bg-black/40 border-b-2 border-purple-500 p-3 text-sm mb-8 outline-none text-purple-200">
-                <button onclick="saveAppointment()" class="w-full bg-purple-900/40 border-2 border-purple-500 py-4 text-[10px] uppercase tracking-[0.5em] font-black hover:bg-purple-900/60 transition">Seal Ritual</button>
+                <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40">✕</button>
+                <h3 class="text-[10px] mb-4 font-black">Inscribe for: <span id="target-date-display" class="text-purple-400">--</span></h3>
+                <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-4 outline-none italic font-black">
+                <input type="time" id="appt-time" class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-6 outline-none text-purple-200">
+                <button onclick="saveAppointment()" class="w-full bg-purple-900/40 border-2 border-purple-500 py-3 text-[10px] uppercase font-black">Seal Ritual</button>
             </div>
 
             <div class="artifact-card">
                 <div class="flex justify-between items-center mb-8">
                     <i data-lucide="arrow-left-circle" class="nav-btn w-6 h-6" onclick="changeMonth(-1)"></i>
-                    <h2 id="calendar-month" class="text-sm tracking-[0.5em] font-black gold-text border-b border-yellow-600/20 pb-2"></h2>
+                    <h2 id="calendar-month" class="text-sm tracking-[0.5em] font-black gold-text"></h2>
                     <i data-lucide="arrow-right-circle" class="nav-btn w-6 h-6" onclick="changeMonth(1)"></i>
                 </div>
-                <div class="grid grid-cols-7 gap-1 text-center text-[10px] opacity-60 mb-4 font-black uppercase tracking-widest">
+                <div class="grid grid-cols-7 gap-1 text-center text-[10px] opacity-40 mb-4 font-black uppercase tracking-widest">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
                 <div id="calendar-days" class="grid grid-cols-7 gap-1 calendar-grid"></div>
             </div>
 
             <div class="artifact-card min-h-[150px]">
-                <h3 class="text-[10px] mb-6 text-purple-400 font-black uppercase tracking-widest border-b border-purple-900/30 pb-2">Active Rituals</h3>
+                <h3 class="text-[10px] mb-4 text-purple-400 font-black uppercase tracking-widest">Active Rituals</h3>
                 <div id="appt-list" class="space-y-4"></div>
             </div>
-
-            <div class="artifact-card min-h-[300px] flex flex-col">
-                <h3 class="text-[10px] mb-8 uppercase tracking-widest font-black flex items-center gap-3">
-                    <i data-lucide="scroll" class="w-5 h-5 text-yellow-600"></i> General Whispers
-                </h3>
-                <div id="whisper-list" class="space-y-5 overflow-y-auto flex-grow mb-6 pr-2 font-black italic"></div>
-                <div class="mt-auto">
-                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b-2 border-yellow-600/30 p-3 text-sm outline-none italic placeholder-yellow-900/50 font-black">
-                    <button onclick="addWhisper()" class="w-full mt-8 bg-yellow-900/30 border-2 border-yellow-600/40 py-4 text-[10px] uppercase tracking-[0.5em] font-black hover:bg-yellow-600/40 transition">Inscribe</button>
-                </div>
-            </div>
         </section>
-
         <section class="art-panel"></section>
     </div>
 
@@ -164,6 +138,17 @@
         let selectedDate = null;
         let allAppointments = [];
 
+        // ALMANAC HOLIDAYS
+        const holidays = {
+            "2-2": "Imbolc",
+            "2-14": "Valentine's Day",
+            "2-16": "Presidents' Day",
+            "3-8": "DST Begins",
+            "3-17": "St. Patrick's Day",
+            "3-20": "Vernal Equinox",
+            "4-5": "Easter"
+        };
+
         function updateClock() {
             document.getElementById('current-time').innerText = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
         }
@@ -174,7 +159,6 @@
                 const data = await res.json();
                 if(data.main) {
                     document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
-                    document.getElementById('weather-desc').innerText = data.weather[0].description;
                 }
             } catch (e) { console.error(e); }
         }
@@ -183,7 +167,6 @@
             const { data } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
             allAppointments = data || [];
             renderCalendar();
-            loadWhispers();
             fetchWeather();
             lucide.createIcons();
         }
@@ -204,9 +187,16 @@
             for (let i = 1; i <= last; i++) {
                 const d = document.createElement('div');
                 const dateKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const holidayKey = `${viewMonth + 1}-${i}`;
+                
                 d.innerText = i;
                 if (i === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()) d.classList.add('today');
                 if (allAppointments.some(a => a.event_date === dateKey)) d.classList.add('has-ritual');
+                if (holidays[holidayKey]) {
+                    d.classList.add('is-holiday');
+                    d.title = holidays[holidayKey];
+                }
+                
                 d.onclick = (e) => selectDay(dateKey, e.target);
                 grid.appendChild(d);
             }
@@ -235,49 +225,34 @@
             const title = document.getElementById('appt-input').value;
             const event_time = document.getElementById('appt-time').value;
             if(!title || !selectedDate) return;
-            const { error } = await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time: event_time || null }]);
-            if (!error) {
-                document.getElementById('appt-input').value = '';
-                document.getElementById('appt-time').value = '';
-                await initData();
-            }
+            await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time: event_time || null }]);
+            document.getElementById('appt-input').value = '';
+            await initData();
         }
 
         function loadDayAppointments() {
             const filtered = allAppointments.filter(a => a.event_date === selectedDate);
-            document.getElementById('appt-list').innerHTML = filtered.map(a => `
-                <div class="flex justify-between items-center p-4 bg-purple-900/10 border-l-4 border-purple-500 text-xs shadow-2xl mb-2 font-black">
-                    <span><span class="text-purple-400 mr-3">${a.event_time || ''}</span> ${a.title}</span>
-                    <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-60 hover:opacity-100 transition">✕</button>
+            const viewMonth = new Date(selectedDate).getMonth() + 1;
+            const viewDay = new Date(selectedDate).getDate() + 1; // Correction for Date object behavior
+            const holiday = holidays[`${viewMonth}-${viewDay}`];
+
+            let html = filtered.map(a => `
+                <div class="flex justify-between items-center p-3 bg-purple-900/10 border-l-4 border-purple-500 text-xs shadow-xl mb-2 font-black">
+                    <span><span class="text-purple-400 mr-2">${a.event_time || ''}</span> ${a.title}</span>
+                    <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-60">✕</button>
                 </div>
             `).join('');
+
+            if (holiday) {
+                html = `<div class="p-3 bg-yellow-900/20 border-l-4 border-yellow-500 text-xs shadow-xl mb-4 gold-text italic font-black">✧ ${holiday}</div>` + html;
+            }
+
+            document.getElementById('appt-list').innerHTML = html || '<p class="text-[10px] opacity-40 italic">No rituals inscribed for this day.</p>';
         }
 
         async function deleteAppt(id) {
             await _supabase.from('appointments').delete().eq('id', id);
             await initData();
-        }
-
-        async function loadWhispers() {
-            const { data } = await _supabase.from('magical_events').select('*').order('created_at', { ascending: false });
-            if (data) document.getElementById('whisper-list').innerHTML = data.map(w => `
-                <div class="flex justify-between items-center p-4 bg-black/40 border-l-2 border-yellow-600/40 mb-3 shadow-lg">
-                    <span>"${w.title}"</span>
-                    <button onclick="deleteWhisper('${w.id}')" class="text-red-500 opacity-60 hover:opacity-100 transition">✕</button>
-                </div>
-            `).join('');
-        }
-
-        async function addWhisper() {
-            const input = document.getElementById('whisper-input');
-            if(!input.value.trim()) return;
-            await _supabase.from('magical_events').insert([{ title: input.value, event_date: new Date() }]);
-            input.value = ''; loadWhispers();
-        }
-
-        async function deleteWhisper(id) {
-            await _supabase.from('magical_events').delete().eq('id', id);
-            loadWhispers();
         }
 
         updateClock(); initData(); setInterval(updateClock, 1000);
