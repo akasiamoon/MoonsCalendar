@@ -22,6 +22,7 @@
         body, html { height: 100%; margin: 0; padding: 0; background-color: #050807; color: var(--parchment); font-family: 'Quattrocento', serif; overflow: hidden; }
         .wrapper { display: flex; height: 100vh; width: 100vw; }
         
+        /* HEAVY UI PANEL */
         .ui-panel {
             width: 38%; height: 100%; overflow-y: auto;
             background: linear-gradient(145deg, #0D1310 0%, #050807 100%);
@@ -33,14 +34,15 @@
 
         .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
-        .title-container { width: 100%; display: flex; justify-content: center; margin-bottom: 2.5rem; }
+        /* FIXED TITLE LOGIC */
+        .title-container { width: 100%; text-align: center; margin-bottom: 2.5rem; }
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            letter-spacing: 0.05em; font-size: 2.3rem !important; line-height: 1.1;
+            letter-spacing: 0.02em; font-size: 2.2rem !important; line-height: 1;
             background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
-            flex-shrink: 0;
+            display: inline-block;
         }
 
         h2, h3, .gold-text { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -51,8 +53,13 @@
             box-shadow: 0 15px 35px var(--deep-shadow), inset 0 0 15px rgba(0,0,0,0.5);
         }
 
-        #current-time { color: var(--gold-bright); font-weight: 900; font-size: 1.1rem; filter: drop-shadow(0 0 5px var(--gold)); }
+        /* IMPROVED WEATHER LAYOUT */
+        .weather-display { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
+        #current-temp { font-size: 3.5rem; font-weight: 900; line-height: 1; }
+        #current-time { color: var(--gold-bright); font-weight: 900; font-size: 1.25rem; letter-spacing: 0.05em; }
+        .weather-desc { text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--gold); opacity: 0.8; font-weight: 700; }
         
+        /* CALENDAR AGED PARCHMENT */
         .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.1); font-size: 0.85rem; cursor: pointer; color: var(--parchment); font-weight: 700; background: rgba(0,0,0,0.3); transition: 0.3s; }
         .calendar-grid div:hover { background: var(--gold); color: #050807 !important; box-shadow: 0 0 20px var(--gold); }
         
@@ -76,16 +83,23 @@
         <section class="ui-panel">
             <header class="title-container">
                 <h1>MoonsCalendar</h1>
+                <p class="text-[8px] tracking-[0.5em] text-yellow-600 font-bold uppercase mt-2">The Grimoire | Farmington MS</p>
             </header>
-            <p class="text-[8px] tracking-[0.6em] text-center text-yellow-600 font-bold uppercase -mt-8 mb-10">Grimoire | Farmington MS</p>
 
-            <div class="artifact-card flex items-center justify-between gap-4">
-                <div id="w-icon-container" class="filter drop-shadow(0 0 10px var(--gold))">
-                    <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i>
-                </div>
-                <div class="flex flex-col items-end">
-                    <span id="current-temp" class="text-5xl font-black gold-text">--°</span>
-                    <p id="current-time" class="mt-1">--:-- --</p>
+            <div class="artifact-card">
+                <div class="weather-display">
+                    <div id="w-icon-container" class="filter drop-shadow(0 0 12px var(--gold))">
+                        <i data-lucide="cloud-sun" class="w-14 h-14 text-yellow-500"></i>
+                    </div>
+                    <div class="flex flex-col justify-center border-l border-yellow-600/20 pl-6">
+                        <div class="flex items-center gap-4">
+                            <span id="current-temp" class="gold-text">--°</span>
+                            <div class="flex flex-col">
+                                <p id="current-time">--:-- --</p>
+                                <p id="weather-desc" class="weather-desc">Reading the skies...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -141,10 +155,11 @@
                 const data = await res.json();
                 if(data.main) {
                     document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
+                    document.getElementById('weather-desc').innerText = data.weather[0].description;
                     const main = data.weather[0].main.toLowerCase();
                     let icon = 'cloud-sun';
                     if(main.includes('rain')) icon = 'cloud-rain'; else if(main.includes('clear')) icon = 'sun';
-                    document.getElementById('w-icon-container').innerHTML = `<i data-lucide="${icon}" class="w-12 h-12 text-yellow-500"></i>`;
+                    document.getElementById('w-icon-container').innerHTML = `<i data-lucide="${icon}" class="w-14 h-14 text-yellow-500"></i>`;
                     lucide.createIcons();
                 }
             } catch (e) { console.error(e); }
@@ -182,3 +197,74 @@
                 grid.appendChild(d);
             }
         }
+
+        function selectDay(date, el) {
+            selectedDate = date;
+            document.querySelectorAll('.calendar-grid div').forEach(div => div.classList.remove('selected-day'));
+            el.classList.add('selected-day');
+            document.getElementById('target-date-display').innerText = date;
+            document.getElementById('appt-form').classList.remove('hidden');
+            loadDayAppointments();
+        }
+
+        function hideApptForm() { 
+            document.getElementById('appt-form').classList.add('hidden');
+            document.querySelectorAll('.calendar-grid div').forEach(div => div.classList.remove('selected-day'));
+        }
+
+        async function saveAppointment() {
+            const title = document.getElementById('appt-input').value;
+            const event_time = document.getElementById('appt-time').value;
+            if(!title || !selectedDate) return;
+            const { error } = await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time: event_time || null }]);
+            if (error) { console.error("Save Error:", error); return; }
+            document.getElementById('appt-input').value = '';
+            document.getElementById('appt-time').value = '';
+            await initData();
+        }
+
+        function loadDayAppointments() {
+            const filtered = allAppointments.filter(a => a.event_date === selectedDate);
+            document.getElementById('appt-list').innerHTML = filtered.map(a => `
+                <div class="flex justify-between items-center p-3 bg-purple-900/10 border-l-2 border-purple-500 text-xs shadow-xl">
+                    <span><span class="text-purple-400 font-black mr-2">${a.event_time || ''}</span> ${a.title}</span>
+                    <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-50 hover:opacity-100">✕</button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        async function deleteAppt(id) {
+            await _supabase.from('appointments').delete().eq('id', id);
+            await initData();
+        }
+
+        async function loadWhispers() {
+            const { data } = await _supabase.from('magical_events').select('*').order('created_at', { ascending: false });
+            if (data) document.getElementById('whisper-list').innerHTML = data.map(w => `
+                <div class="flex justify-between items-center p-3 bg-black/40 rounded border-l border-yellow-600/30 mb-2">
+                    <span>"${w.title}"</span>
+                    <button onclick="deleteWhisper('${w.id}')" class="text-red-500 opacity-50 hover:opacity-100">✕</button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        async function addWhisper() {
+            const input = document.getElementById('whisper-input');
+            if(!input.value.trim()) return;
+            await _supabase.from('magical_events').insert([{ title: input.value, event_date: new Date() }]);
+            input.value = ''; loadWhispers();
+        }
+
+        async function deleteWhisper(id) {
+            await _supabase.from('magical_events').delete().eq('id', id);
+            loadWhispers();
+        }
+
+        updateClock(); initData(); fetchWeather();
+        setInterval(updateClock, 1000); setInterval(fetchWeather, 600000);
+        _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, initData).subscribe();
+    </script>
+</body>
+</html>
