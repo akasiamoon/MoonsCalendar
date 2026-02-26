@@ -117,4 +117,144 @@
                 <div class="flex justify-between items-center mb-8">
                     <i data-lucide="arrow-left-circle" class="nav-btn w-6 h-6" onclick="changeMonth(-1)"></i>
                     <h2 id="calendar-month" class="text-sm tracking-[0.5em] font-black gold-text border-b border-yellow-600/20 pb-2"></h2>
-                    <i data-lucide="arrow-right-circle" class="nav-btn w-6 h-6" onclick="
+                    <i data-lucide="arrow-right-circle" class="nav-btn w-6 h-6" onclick="changeMonth(1)"></i>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center text-[9px] opacity-40 mb-4 font-black uppercase tracking-widest">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                <div id="calendar-days" class="grid grid-cols-7 gap-1 calendar-grid"></div>
+            </div>
+
+            <div class="artifact-card min-h-[150px]">
+                <h3 class="text-[10px] mb-4 text-purple-400 font-black uppercase tracking-widest border-b border-purple-900/30 pb-2">Active Rituals</h3>
+                <div id="appt-list" class="space-y-4"></div>
+            </div>
+
+            <div class="artifact-card min-h-[300px] flex flex-col">
+                <h3 class="text-[10px] mb-8 uppercase tracking-widest font-black flex items-center gap-3">
+                    <i data-lucide="scroll" class="w-5 h-5 text-yellow-600"></i> General Whispers
+                </h3>
+                <div id="whisper-list" class="space-y-5 overflow-y-auto flex-grow mb-6 pr-2 font-black italic"></div>
+                <div class="mt-auto">
+                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b-2 border-yellow-600/30 p-3 text-sm outline-none italic placeholder-yellow-900/50 font-black">
+                    <button onclick="addWhisper()" class="w-full mt-6 bg-yellow-900/30 border-2 border-yellow-600/40 py-4 text-[10px] uppercase font-black hover:bg-yellow-600/40 transition">Inscribe Whisper</button>
+                </div>
+            </div>
+        </section>
+        <section class="art-panel"></section>
+    </div>
+
+    <script>
+        const SB_URL = 'https://qgppnxpezkqfqdcazrol.supabase.co';
+        const SB_KEY = 'sb_publishable_aHS858clyUkvMHC3KH-HGQ_kSx1XJ3X';
+        const W_KEY = '88f3e35af62ba59bad38a3d346e0ca84';
+        const _supabase = supabase.createClient(SB_URL, SB_KEY);
+        
+        let currentDate = new Date();
+        let selectedDate = null;
+        let allAppointments = [];
+        let currentSigil = '🔮';
+
+        const holidays = { "2-2": "Imbolc", "2-14": "Valentine's Day", "2-16": "Presidents' Day", "3-8": "DST Begins", "3-17": "St. Patrick's Day", "3-20": "Vernal Equinox", "4-5": "Easter" };
+
+        function setAvatar(sigil, el) {
+            currentSigil = sigil;
+            document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function updateClock() {
+            document.getElementById('current-time').innerText = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        async function fetchWeather() {
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Farmington,MS,US&units=imperial&appid=${W_KEY}`);
+                const data = await res.json();
+                if(data.main) document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
+            } catch (e) { console.error(e); }
+        }
+
+        async function initData() {
+            const { data } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
+            allAppointments = data || [];
+            renderCalendar();
+            loadWhispers();
+            fetchWeather();
+            lucide.createIcons();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-days');
+            const viewMonth = currentDate.getMonth();
+            const viewYear = currentDate.getFullYear();
+            const today = new Date();
+            document.getElementById('calendar-month').innerText = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+            const first = new Date(viewYear, viewMonth, 1).getDay();
+            const last = new Date(viewYear, viewMonth + 1, 0).getDate();
+            grid.innerHTML = "";
+            for (let i = 0; i < first; i++) grid.appendChild(document.createElement('div')).className="opacity-0 cursor-default";
+            for (let i = 1; i <= last; i++) {
+                const d = document.createElement('div');
+                const dateKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const holidayKey = `${viewMonth + 1}-${i}`;
+                d.innerText = i;
+                if (i === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()) d.classList.add('today');
+                if (allAppointments.some(a => a.event_date === dateKey)) d.classList.add('has-ritual');
+                if (holidays[holidayKey]) d.classList.add('is-holiday');
+                d.onclick = (e) => selectDay(dateKey, e.target);
+                grid.appendChild(d);
+            }
+        }
+
+        function changeMonth(dir) { currentDate.setMonth(currentDate.getMonth() + dir); renderCalendar(); }
+
+        function selectDay(date, el) {
+            selectedDate = date;
+            document.querySelectorAll('.calendar-grid div').forEach(div => div.classList.remove('selected-day'));
+            el.classList.add('selected-day');
+            document.getElementById('target-date-display').innerText = date;
+            document.getElementById('appt-form').classList.remove('hidden');
+            loadDayAppointments();
+        }
+
+        function hideApptForm() { document.getElementById('appt-form').classList.add('hidden'); }
+
+        async function saveAppointment() {
+            const i = document.getElementById('appt-input'); if(!i.value || !selectedDate) return;
+            const name = document.getElementById('userName').value || 'Amber';
+            const time = document.getElementById('appt-time').value;
+            const fullTitle = `${currentSigil} ${name}: ${i.value}`;
+            await _supabase.from('appointments').insert([{ title: fullTitle, event_date: selectedDate, event_time: time || null }]);
+            i.value = ''; await initData();
+        }
+
+        function loadDayAppointments() {
+            const filtered = allAppointments.filter(a => a.event_date === selectedDate);
+            let html = filtered.map(a => `<div class="flex justify-between items-center p-3 bg-purple-900/10 border-l-4 border-purple-500 text-xs shadow-xl mb-2 font-black"><span><span class="text-purple-400 mr-2">${a.event_time || ''}</span> ${a.title}</span><button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-60">✕</button></div>`).join('');
+            document.getElementById('appt-list').innerHTML = html || '<p class="text-[10px] opacity-40 italic">No rituals inscribed.</p>';
+        }
+
+        async function deleteAppt(id) { await _supabase.from('appointments').delete().eq('id', id); await initData(); }
+
+        async function loadWhispers() {
+            const { data } = await _supabase.from('magical_events').select('*').order('created_at', { ascending: false });
+            if (data) document.getElementById('whisper-list').innerHTML = data.map(w => `<div class="flex justify-between items-center p-4 bg-black/40 border-l-2 border-yellow-600/40 mb-3 shadow-lg"><span>"${w.title}"</span><button onclick="deleteWhisper('${w.id}')" class="text-red-500 opacity-60 transition">✕</button></div>`).join('');
+            lucide.createIcons();
+        }
+
+        async function addWhisper() {
+            const i = document.getElementById('whisper-input'); if(!i.value.trim()) return;
+            const name = document.getElementById('userName').value || 'Amber';
+            const fullWhisper = `${currentSigil} ${name}: ${i.value}`;
+            await _supabase.from('magical_events').insert([{ title: fullWhisper, event_date: new Date() }]);
+            i.value = ''; loadWhispers();
+        }
+
+        async function deleteWhisper(id) { await _supabase.from('magical_events').delete().eq('id', id); loadWhispers(); }
+
+        updateClock(); initData(); setInterval(updateClock, 1000);
+        _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, initData).subscribe();
+    </script>
+</body>
+</html>
