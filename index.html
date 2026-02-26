@@ -185,7 +185,31 @@
                 alert("The ink didn't dry. Try again!");
             }
         }
+// --- 6. LUNAR LOGIC (ALMANAC) ---
+function calculateMoonPhase() {
+    const date = new Date();
+    const lp = 2551443; 
+    const now = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+    const new_moon = new Date(1970, 0, 7, 20, 35, 0);
+    const phase = ((now.getTime() - new_moon.getTime()) / 1000) % lp;
+    const res = Math.floor(phase / (24 * 3600));
+    
+    let icon = "🌑";
+    let name = "New Moon";
+    let tip = "Rest and plan your garden.";
 
+    if (res > 1 && res <= 6) { icon = "🌒"; name = "Waxing Crescent"; tip = "Sow seeds for leafy greens."; }
+    else if (res > 6 && res <= 9) { icon = "🌓"; name = "First Quarter"; tip = "Plant above-ground crops now."; }
+    else if (res > 9 && res <= 13) { icon = "🌔"; name = "Waxing Gibbous"; tip = "Fertilize and support growth."; }
+    else if (res > 13 && res <= 16) { icon = "🌕"; name = "Full Moon"; tip = "Harvest herbs and root crops."; }
+    else if (res > 16 && res <= 20) { icon = "🌖"; name = "Waning Gibbous"; tip = "Prune and transplant."; }
+    else if (res > 20 && res <= 23) { icon = "🌗"; name = "Last Quarter"; tip = "Focus on weeding and pests."; }
+    else if (res > 23) { icon = "🌘"; name = "Waning Crescent"; tip = "Prepare soil for the next cycle."; }
+
+    document.getElementById('moon-icon').innerText = icon;
+    document.getElementById('moon-phase-name').innerText = name;
+    document.getElementById('planting-tip').innerText = tip;
+}
         // --- INITIALIZE ---
         updateClock();
         renderCalendar();
