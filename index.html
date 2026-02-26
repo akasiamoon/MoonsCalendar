@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonsCalendar | Artifact Layout</title>
+    <title>MoonsCalendar | Collector's Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,150 +18,161 @@
             --parchment: #F4EBD0; 
         }
 
-        body { 
+        body, html { 
+            height: 100%; margin: 0; padding: 0;
             background-color: var(--dark-forest); 
             color: var(--parchment); 
             font-family: 'Quattrocento', serif; 
-            margin: 0; padding: 0; 
-            overflow-x: hidden;
+            overflow: hidden; /* We'll scroll individual panels instead */
+        }
+
+        /* SPLIT SCREEN LAYOUT */
+        .wrapper {
             display: flex;
-            min-h-screen;
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* SPLIT LAYOUT LOGIC */
-        .main-container {
-            display: grid;
-            grid-template-cols: 1fr;
-            width: 100%;
-            min-h-screen;
-        }
-
-        @media (min-width: 1024px) {
-            .main-container {
-                grid-template-columns: 1fr 1fr; /* 50% UI, 50% Art */
-            }
-        }
-
-        /* LEFT SIDE: THE UI */
-        .ui-section {
-            padding: 2rem;
-            z-index: 10;
-            background: linear-gradient(to right, var(--dark-forest), rgba(13, 19, 16, 0.8));
+        /* LEFT SIDE: THE CONTROL PANEL */
+        .ui-panel {
+            width: 40%; /* Professional column width */
+            height: 100%;
             overflow-y: auto;
+            background: linear-gradient(to bottom, #0D1310, #161d1a);
+            border-right: 2px solid var(--gold);
+            padding: 3rem 2rem;
+            z-index: 20;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
         }
 
-        /* RIGHT SIDE: THE ART */
-        .art-section {
+        /* RIGHT SIDE: THE MASTERPIECE */
+        .art-panel {
+            width: 60%;
+            height: 100%;
             background-image: url('MARCH COVER.jpg');
             background-size: cover;
             background-position: center;
-            background-attachment: local;
-            border-left: 2px solid var(--gold);
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-            min-height: 400px;
+            position: relative;
         }
 
+        .art-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(13,19,16,0.4), transparent);
+        }
+
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 1024px) {
+            .wrapper { flex-direction: column-reverse; overflow-y: auto; height: auto; }
+            .ui-panel, .art-panel { width: 100%; height: auto; }
+            .art-panel { height: 50vh; }
+            body { overflow: auto; }
+        }
+
+        /* STUNNING TYPOGRAPHY */
         h1, h2, .gold-text { 
             font-family: 'Cinzel', serif; 
             background: linear-gradient(to bottom, #fcf6ba, #bf953f, #fcf6ba, #aa771c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            letter-spacing: 0.1em;
         }
 
-        .gold-border { 
-            border: 1px solid;
-            border-image: linear-gradient(to bottom right, var(--gold), var(--gold-bright), var(--gold)) 1;
-        }
-
-        .glass-panel { 
-            background: rgba(13, 19, 16, 0.6); 
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.15);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            position: relative;
-        }
-
-        .calendar-grid div { 
-            aspect-ratio: 1 / 1; 
-            display: flex; align-items: center; justify-content: center; 
-            border: 1px solid rgba(212, 175, 55, 0.1); 
-            cursor: pointer; 
-            font-size: 0.8rem;
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
             transition: 0.3s;
         }
-        .calendar-grid div:hover { background: rgba(212, 175, 55, 0.2); color: var(--gold-bright); }
-        .today { background: rgba(212, 175, 55, 0.3) !important; border: 1px solid var(--gold) !important; font-weight: bold; }
 
-        /* Dust effect stays on the left */
-        #dustCanvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+        .glass-card:hover { border-color: var(--gold); background: rgba(255, 255, 255, 0.05); }
+
+        .calendar-grid div { 
+            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(212, 175, 55, 0.1); font-size: 0.75rem; transition: 0.2s;
+        }
+        .calendar-grid div:hover { background: var(--gold); color: black; font-weight: bold; }
+        .today { background: rgba(212, 175, 55, 0.3) !important; border: 1px solid var(--gold) !important; font-weight: bold; color: var(--gold-bright); }
+
+        /* SCROLLBAR */
+        .ui-panel::-webkit-scrollbar { width: 4px; }
+        .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
+    <div class="wrapper">
         
-        <section class="ui-section relative">
-            <canvas id="dustCanvas"></canvas>
-
-            <header class="mb-10 relative z-20">
-                <h1 class="text-4xl font-bold tracking-tighter uppercase mb-2">MoonsCalendar</h1>
-                <div id="weather-widget" class="flex items-center gap-6 opacity-90">
-                    <span id="current-temp" class="text-3xl font-bold gold-text">--°</span>
-                    <div class="h-8 w-[1px] bg-yellow-600/30"></div>
-                    <div>
-                        <p id="current-time" class="text-lg font-bold">--:--</p>
-                        <p id="weather-desc" class="text-[9px] uppercase tracking-widest text-yellow-500">Farmington MS</p>
+        <section class="ui-panel">
+            <header class="mb-12">
+                <h1 class="text-4xl font-bold uppercase mb-2">MoonsCalendar</h1>
+                <p class="text-[10px] tracking-[0.5em] text-yellow-600 uppercase mb-6 font-bold">Collector's Edition | Farmington MS</p>
+                
+                <div id="weather-widget" class="flex items-center gap-6 glass-card !p-4">
+                    <div class="text-center">
+                        <span id="current-temp" class="text-3xl font-bold gold-text">--°</span>
+                        <p class="text-[8px] uppercase tracking-widest opacity-60">Temperature</p>
+                    </div>
+                    <div class="h-10 w-[1px] bg-yellow-600/20"></div>
+                    <div class="flex-grow">
+                        <p id="current-time" class="text-lg font-bold">--:-- --</p>
+                        <p id="weather-desc" class="text-[8px] uppercase tracking-widest text-yellow-500">Reading Skies</p>
                     </div>
                 </div>
             </header>
 
-            <div class="grid grid-cols-1 gap-8 relative z-20">
-                
-                <div class="glass-panel gold-border p-6 flex items-center gap-6">
-                    <div id="moon-icon" class="text-6xl filter drop-shadow(0 0 10px var(--gold))">🌑</div>
-                    <div>
-                        <h3 class="gold-text uppercase text-xs tracking-[0.2em] font-bold" id="moon-phase-name">Calculating...</h3>
-                        <p id="planting-tip" class="text-xs italic opacity-80 mt-1 leading-relaxed"></p>
-                    </div>
+            <div class="glass-card flex items-center gap-6">
+                <div id="moon-icon" class="text-6xl filter drop-shadow(0 0 10px var(--gold))">🌑</div>
+                <div>
+                    <h3 class="gold-text uppercase text-[10px] tracking-widest font-bold" id="moon-phase-name">Almanac</h3>
+                    <p id="planting-tip" class="text-xs italic opacity-70 mt-1 leading-relaxed"></p>
                 </div>
+            </div>
 
-                <div class="glass-panel gold-border p-6">
-                    <h2 id="calendar-month" class="text-xl uppercase tracking-widest mb-4 text-center"></h2>
-                    <div class="grid grid-cols-7 gap-1 text-center text-[9px] opacity-40 mb-2 font-bold">
-                        <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
-                    </div>
-                    <div id="calendar-days" class="grid grid-cols-7 gap-1 calendar-grid"></div>
+            <div class="glass-card">
+                <h2 id="calendar-month" class="text-lg uppercase tracking-[0.3em] mb-4 text-center border-b border-yellow-600/20 pb-2"></h2>
+                <div class="grid grid-cols-7 gap-1 text-center text-[9px] opacity-40 mb-2 font-bold tracking-widest uppercase">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
+                <div id="calendar-days" class="grid grid-cols-7 gap-1 calendar-grid"></div>
+            </div>
 
-                <div class="glass-panel gold-border p-6 flex flex-col min-h-[300px]">
-                    <h3 class="gold-text uppercase text-xs tracking-widest font-bold mb-4 flex items-center gap-2">
-                        <i data-lucide="scroll" class="w-4 h-4"></i> Inscribed Notes
-                    </h3>
-                    <div id="event-list" class="space-y-3 overflow-y-auto max-h-[200px] mb-4 pr-2"></div>
-                    <div class="mt-auto">
-                        <input type="text" id="note-input" placeholder="Add to the scroll..." 
-                               class="w-full bg-transparent border-b border-yellow-600/30 p-2 text-sm focus:outline-none focus:border-gold">
-                        <button onclick="addNote()" class="w-full mt-4 bg-yellow-700/10 border border-yellow-600/40 py-2 text-[9px] uppercase tracking-[0.3em] font-bold hover:bg-yellow-600/20">
-                            Inscribe
-                        </button>
-                    </div>
+            <div class="glass-card min-h-[350px] flex flex-col">
+                <h3 class="gold-text uppercase text-[10px] tracking-widest font-bold mb-6 flex items-center gap-2">
+                    <i data-lucide="scroll" class="w-4 h-4 text-yellow-600"></i> Inscribed Notes
+                </h3>
+                <div id="event-list" class="space-y-4 overflow-y-auto flex-grow mb-6 pr-2"></div>
+                <div class="mt-auto">
+                    <input type="text" id="note-input" placeholder="Speak to the scroll..." 
+                           class="w-full bg-transparent border-b border-yellow-600/30 p-2 text-sm focus:outline-none focus:border-gold italic text-yellow-100/80">
+                    <button onclick="addNote()" class="w-full mt-6 bg-yellow-700/10 border border-yellow-600/40 py-3 text-[10px] uppercase tracking-[0.4em] font-bold hover:bg-yellow-600/30 transition shadow-2xl">
+                        Inscribe
+                    </button>
                 </div>
             </div>
         </section>
 
-        <section class="art-section hide-mobile"></section>
+        <section class="art-panel">
+            <div class="absolute bottom-10 right-10 text-right opacity-30">
+                <p class="text-[10px] uppercase tracking-[0.6em]">Whispers & Wonders</p>
+                <p class="text-[8px] italic">Est. 2026</p>
+            </div>
+        </section>
 
     </div>
 
     <script>
-        // CONFIG
         const SB_URL = 'https://qgppnxpezkqfqdcazrol.supabase.co';
         const SB_KEY = 'sb_publishable_aHS858clyUkvMHC3KH-HGQ_kSx1XJ3X';
         const W_KEY = '88f3e35af62ba59bad38a3d346e0ca84';
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
         lucide.createIcons();
 
-        // TIME, WEATHER, CALENDAR, MOON
         function updateClock() {
             const now = new Date();
             document.getElementById('current-time').innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -171,7 +182,10 @@
             try {
                 const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Farmington,MS,US&units=imperial&appid=${W_KEY}`);
                 const data = await res.json();
-                if(data.main) document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
+                if(data.main) {
+                    document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
+                    document.getElementById('weather-desc').innerText = data.weather[0].description;
+                }
             } catch (e) { console.log(e); }
         }
 
@@ -211,7 +225,10 @@
         async function loadNotes() {
             const { data } = await _supabase.from('magical_events').select('*').order('created_at', { ascending: false });
             if (data) document.getElementById('event-list').innerHTML = data.map(n => `
-                <div class="p-3 bg-black/40 rounded-sm border-l border-yellow-600 text-[11px] italic opacity-90">"${n.title}"</div>
+                <div class="p-4 bg-black/40 rounded border-l border-yellow-600/50 text-[11px] italic text-yellow-50/80 shadow-lg">
+                    <p class="opacity-30 text-[8px] uppercase tracking-widest mb-1 not-italic font-bold">${new Date(n.created_at).toLocaleDateString()}</p>
+                    "${n.title}"
+                </div>
             `).join('');
         }
 
@@ -222,28 +239,9 @@
             if (!error) { input.value = ''; loadNotes(); }
         }
 
-        // DUST
-        const canvas = document.getElementById('dustCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        function initDust() {
-            canvas.width = window.innerWidth / 2; canvas.height = window.innerHeight;
-            for(let i=0; i<30; i++) particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1, v: Math.random()*0.3 + 0.1 });
-        }
-        function drawDust() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "rgba(212, 175, 55, 0.2)";
-            ctx.beginPath();
-            particles.forEach(p => {
-                ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-                p.y -= p.v; if(p.y < 0) p.y = canvas.height;
-            });
-            ctx.fill(); requestAnimationFrame(drawDust);
-        }
-
-        // INIT
-        updateClock(); renderCalendar(); loadNotes(); fetchWeather(); calculateMoonPhase(); initDust(); drawDust();
-        setInterval(updateClock, 1000); setInterval(fetchWeather, 600000);
+        updateClock(); renderCalendar(); loadNotes(); fetchWeather(); calculateMoonPhase();
+        setInterval(updateClock, 1000);
+        setInterval(fetchWeather, 600000);
         _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'magical_events' }, loadNotes).subscribe();
     </script>
 </body>
