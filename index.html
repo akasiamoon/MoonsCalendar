@@ -33,49 +33,32 @@
 
         .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
-        /* HEAVY HEADERS */
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            letter-spacing: 0.02em; font-size: 2.3rem !important; line-height: 1.1;
+            letter-spacing: 0.01em; font-size: 2.2rem !important; line-height: 1.1;
             background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
             width: 100%; margin-bottom: 0.5rem; display: block; text-align: center;
         }
 
-        h2, h3, .gold-text { 
-            font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: 0.1em;
-        }
+        h2, h3, .gold-text { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.1em; }
 
-        .artifact-card { 
-            background: rgba(13, 19, 16, 0.9); border: 1px solid rgba(212, 175, 55, 0.2); 
-            padding: 1.5rem; margin-bottom: 2rem; border-radius: 2px;
-            box-shadow: 0 15px 35px var(--deep-shadow);
-        }
+        .artifact-card { background: rgba(13, 19, 16, 0.9); border: 1px solid rgba(212, 175, 55, 0.2); padding: 1.5rem; margin-bottom: 2rem; border-radius: 2px; box-shadow: 0 15px 35px var(--deep-shadow); }
 
-        /* PARCHMENT CLOCK & NUMBERS */
         #current-time { color: var(--gold-bright); font-weight: 900; filter: drop-shadow(0 0 5px var(--gold)); }
-        .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.05); font-size: 0.8rem; cursor: pointer; color: var(--parchment); font-weight: 700; }
+        .calendar-grid div { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.05); font-size: 0.8rem; cursor: pointer; color: var(--parchment); font-weight: 700; background: rgba(0,0,0,0.2); transition: 0.3s; }
         .calendar-grid div:hover { background: var(--gold); color: #050807 !important; }
         
-        .today { background: rgba(212, 175, 55, 0.2) !important; border: 2px solid var(--gold) !important; color: var(--gold-bright) !important; }
-        .has-appointment { border: 1.5px solid var(--magic-purple) !important; box-shadow: inset 0 0 10px var(--magic-purple); }
+        .today { background: rgba(212, 175, 55, 0.3) !important; border: 2px solid var(--gold) !important; color: var(--gold-bright) !important; box-shadow: 0 0 15px var(--gold); }
+        .has-ritual { border: 1.5px solid var(--magic-purple) !important; box-shadow: inset 0 0 12px var(--magic-purple) !important; }
         .selected-day { border: 2px solid var(--gold-bright) !important; transform: scale(1.05); z-index: 10; }
 
         .delete-btn { color: #ff4d4d; opacity: 0.4; transition: 0.3s; cursor: pointer; }
-        .delete-btn:hover { opacity: 1; }
+        .delete-btn:hover { opacity: 1; transform: scale(1.2); }
 
         .ui-panel::-webkit-scrollbar { width: 4px; }
         .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-
-        @media (max-width: 1024px) {
-            .wrapper { flex-direction: column-reverse; height: auto; overflow: auto; }
-            .ui-panel, .art-panel { width: 100%; height: auto; }
-            .art-panel { height: 40vh; }
-        }
     </style>
 </head>
 <body>
@@ -88,29 +71,34 @@
             </header>
 
             <div class="artifact-card flex items-center gap-6">
-                <div id="w-icon-container"><i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i></div>
-                <div class="flex-grow">
-                    <div class="flex justify-between items-baseline">
-                        <span id="current-temp" class="text-4xl font-black gold-text">--°</span>
-                        <p id="current-time" class="text-lg">--:-- --</p>
-                    </div>
-                    <p id="weather-desc" class="text-[9px] uppercase tracking-widest text-yellow-500 font-bold mt-1">Consulting the Skies...</p>
+                <div id="w-icon-container" class="filter drop-shadow(0 0 10px var(--gold))">
+                    <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i>
+                </div>
+                <div class="flex-grow text-right">
+                    <span id="current-temp" class="text-4xl font-black gold-text">--°</span>
+                    <p id="current-time" class="text-lg">--:-- --</p>
+                </div>
+            </div>
+
+            <div class="artifact-card flex items-center gap-6">
+                <div id="moon-icon" class="text-6xl filter drop-shadow(0 0 15px var(--gold))">🌑</div>
+                <div>
+                    <h3 class="gold-text uppercase text-[10px] tracking-widest font-bold" id="moon-phase-name">Almanac</h3>
+                    <p id="planting-tip" class="text-xs italic opacity-70 mt-1 leading-relaxed"></p>
                 </div>
             </div>
 
             <div id="appt-form" class="artifact-card hidden border-purple-500/50 relative">
                 <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40 hover:opacity-100 transition">✕</button>
-                <h3 class="text-[10px] mb-4 flex justify-between font-bold">
-                    Ritual for <span id="target-date-display" class="text-purple-400">--</span>
-                </h3>
+                <h3 class="text-[10px] mb-4 flex justify-between font-bold">Inscribing Ritual: <span id="target-date-display" class="text-purple-400">--</span></h3>
                 <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b border-purple-500 p-2 text-sm mb-4 outline-none italic text-parchment">
                 <input type="time" id="appt-time" class="w-full bg-black/40 border-b border-purple-500 p-2 text-sm mb-4 outline-none text-purple-200">
-                <button onclick="saveAppointment()" class="w-full bg-purple-900/20 border border-purple-500 py-2 text-[9px] uppercase tracking-widest font-black hover:bg-purple-900/40">Seal Ritual</button>
+                <button onclick="saveAppointment()" class="w-full bg-purple-900/20 border border-purple-500 py-3 text-[9px] uppercase tracking-widest font-black hover:bg-purple-900/40 transition">Seal Ritual</button>
             </div>
 
             <div class="artifact-card">
-                <h2 id="calendar-month" class="text-lg uppercase tracking-[0.3em] mb-4 text-center gold-text font-bold"></h2>
-                <div class="grid grid-cols-7 gap-1 text-center text-[9px] opacity-40 mb-2 font-bold uppercase tracking-widest">
+                <h2 id="calendar-month" class="text-center mb-6 text-sm tracking-[0.4em] font-black gold-text"></h2>
+                <div class="grid grid-cols-7 gap-1 text-center text-[9px] opacity-40 mb-3 font-bold uppercase tracking-widest">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
                 <div id="calendar-days" class="grid grid-cols-7 gap-1 calendar-grid"></div>
@@ -125,8 +113,8 @@
                 <h3 class="text-[10px] mb-6 uppercase tracking-widest font-bold">General Whispers</h3>
                 <div id="whisper-list" class="space-y-4 overflow-y-auto flex-grow mb-4 pr-1 text-sm italic"></div>
                 <div class="mt-auto">
-                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b border-yellow-600/30 p-2 text-sm outline-none italic text-parchment">
-                    <button onclick="addWhisper()" class="w-full mt-4 bg-yellow-900/20 border border-yellow-600/40 py-2 text-[9px] uppercase tracking-[0.4em] font-black hover:bg-yellow-600/30">Inscribe</button>
+                    <input type="text" id="whisper-input" placeholder="Whisper to the void..." class="w-full bg-transparent border-b border-yellow-600/30 p-2 text-sm outline-none italic text-parchment">
+                    <button onclick="addWhisper()" class="w-full mt-6 bg-yellow-900/20 border border-yellow-600/40 py-4 text-[9px] uppercase tracking-[0.4em] font-black hover:bg-yellow-600/30">Inscribe</button>
                 </div>
             </div>
         </section>
@@ -150,10 +138,7 @@
             try {
                 const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Farmington,MS,US&units=imperial&appid=${W_KEY}`);
                 const data = await res.json();
-                if(data.main) {
-                    document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
-                    document.getElementById('weather-desc').innerText = data.weather[0].description;
-                }
+                if(data.main) document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
             } catch (e) { console.error(e); }
         }
 
@@ -163,6 +148,7 @@
             renderCalendar();
             loadWhispers();
             fetchWeather();
+            calculateMoonPhase();
         }
 
         function renderCalendar() {
@@ -181,7 +167,7 @@
                 const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 d.innerText = i;
                 if (i === today) d.classList.add('today');
-                if(allAppointments.some(a => a.event_date === dateKey)) d.classList.add('has-appointment');
+                if (allAppointments.some(a => a.event_date === dateKey)) d.classList.add('has-ritual');
                 d.onclick = (e) => selectDay(dateKey, e.target);
                 grid.appendChild(d);
             }
@@ -207,7 +193,13 @@
             if(!title) return;
             await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time }]);
             document.getElementById('appt-input').value = '';
-            await initData(); // Refresh everything
+            await initData(); // This force-refreshes the calendar glows
+            loadDayAppointments();
+        }
+
+        async function deleteAppt(id) {
+            await _supabase.from('appointments').delete().eq('id', id);
+            await initData();
             loadDayAppointments();
         }
 
@@ -222,16 +214,10 @@
             lucide.createIcons();
         }
 
-        async function deleteAppt(id) {
-            await _supabase.from('appointments').delete().eq('id', id);
-            await initData(); 
-            loadDayAppointments();
-        }
-
         async function loadWhispers() {
             const { data } = await _supabase.from('magical_events').select('*').order('created_at', { ascending: false });
             if (data) document.getElementById('whisper-list').innerHTML = data.map(w => `
-                <div class="p-3 bg-black/40 rounded border-l border-yellow-600/30 flex justify-between">
+                <div class="p-3 bg-black/40 rounded border-l border-yellow-600/30 flex justify-between items-center">
                     <span>"${w.title}"</span>
                     <i data-lucide="trash-2" class="w-3 h-3 delete-btn" onclick="deleteWhisper('${w.id}')"></i>
                 </div>
@@ -249,6 +235,23 @@
         async function deleteWhisper(id) {
             await _supabase.from('magical_events').delete().eq('id', id);
             loadWhispers();
+        }
+
+        function calculateMoonPhase() {
+            const lp = 2551443; const now = new Date(); const new_moon = new Date(1970, 0, 7, 20, 35, 0);
+            const phase = ((now.getTime() - new_moon.getTime()) / 1000) % lp;
+            const res = Math.floor(phase / (24 * 3600));
+            let icon = "🌑"; let name = "New Moon"; let tip = "Rest and plan your garden.";
+            if (res > 1 && res <= 6) { icon = "🌒"; name = "Waxing Crescent"; tip = "Sow seeds for leafy greens."; }
+            else if (res > 6 && res <= 9) { icon = "🌓"; name = "First Quarter"; tip = "Plant above-ground crops now."; }
+            else if (res > 9 && res <= 13) { icon = "🌔"; name = "Waxing Gibbous"; tip = "Fertilize and support growth."; }
+            else if (res > 13 && res <= 16) { icon = "🌕"; name = "Full Moon"; tip = "Harvest herbs and root crops."; }
+            else if (res > 16 && res <= 20) { icon = "🌖"; name = "Waning Gibbous"; tip = "Prune and transplant."; }
+            else if (res > 20 && res <= 23) { icon = "🌗"; name = "Last Quarter"; tip = "Focus on weeding and pests."; }
+            else if (res > 23) { icon = "🌘"; name = "Waning Crescent"; tip = "Prepare soil for the cycle."; }
+            document.getElementById('moon-icon').innerText = icon;
+            document.getElementById('moon-phase-name').innerText = name;
+            document.getElementById('planting-tip').innerText = tip;
         }
 
         updateClock(); initData(); setInterval(updateClock, 1000);
