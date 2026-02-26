@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoonsCalendar | Grimoire Edition</title>
+    <title>MoonsCalendar | Eternal Grimoire</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -26,19 +26,13 @@
             width: 38%; height: 100%; overflow-y: auto;
             background: linear-gradient(145deg, #0D1310 0%, #050807 100%);
             border-right: 4px solid; border-image: linear-gradient(to bottom, var(--gold), #8A6D3B, var(--gold)) 1;
-            padding: 3rem 1.5rem; z-index: 20; position: relative;
+            padding: 2.5rem 1.5rem; z-index: 20; position: relative;
             scrollbar-width: thin; scrollbar-color: var(--gold) transparent;
             box-shadow: 25px 0 60px var(--deep-shadow);
         }
 
-        .art-panel { 
-            width: 62%; height: 100%; 
-            background-image: url('THEMARCHCOVER.jpg'); 
-            background-size: cover; background-position: center; 
-            position: relative; 
-        }
+        .art-panel { width: 62%; height: 100%; background-image: url('THEMARCHCOVER.jpg'); background-size: cover; background-position: center; position: relative; }
 
-        /* HEAVY EMBOSSED HEADERS */
         .title-container { width: 100%; text-align: center; margin-bottom: 2.5rem; }
         h1 { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
@@ -49,12 +43,7 @@
             display: inline-block;
         }
 
-        h2, h3, .gold-text { 
-            font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            letter-spacing: 0.1em;
-        }
+        h2, h3, .gold-text { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fcf6ba, #bf953f, #aa771c, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .artifact-card { 
             background: rgba(13, 19, 16, 0.95); border: 1px solid rgba(212, 175, 55, 0.25); 
@@ -62,13 +51,10 @@
             box-shadow: 0 15px 35px var(--deep-shadow), inset 0 0 20px rgba(0,0,0,0.6);
         }
 
-        /* WEATHER HUD LAYOUT */
         .weather-display { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; }
         #current-temp { font-size: 2.2rem; font-weight: 900; color: var(--gold-bright); }
         #current-time { color: var(--gold-bright); font-weight: 900; font-size: 1.2rem; filter: drop-shadow(0 0 5px var(--gold)); }
-        .weather-desc { text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--gold); font-weight: 900; opacity: 0.8; }
-        
-        /* AGED CALENDAR GRID */
+
         .calendar-grid div { 
             aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
             border: 1px solid rgba(212, 175, 55, 0.15); font-size: 0.9rem; cursor: pointer; 
@@ -80,16 +66,11 @@
         .has-ritual { border: 2px solid var(--magic-purple) !important; box-shadow: inset 0 0 12px var(--magic-purple) !important; }
         .selected-day { border: 2px solid var(--gold-bright) !important; transform: scale(1.05); z-index: 10; }
 
-        .delete-btn { color: #ff4d4d; opacity: 0.4; transition: 0.3s; cursor: pointer; }
-        .delete-btn:hover { opacity: 1; transform: scale(1.2); }
+        .nav-btn { cursor: pointer; transition: 0.3s; color: var(--gold); opacity: 0.6; }
+        .nav-btn:hover { opacity: 1; transform: scale(1.2); }
 
         .ui-panel::-webkit-scrollbar { width: 5px; }
         .ui-panel::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-
-        @media (max-width: 1024px) {
-            .wrapper { flex-direction: column-reverse; }
-            .ui-panel, .art-panel { width: 100%; }
-        }
     </style>
 </head>
 <body>
@@ -103,15 +84,13 @@
 
             <div class="artifact-card">
                 <div class="weather-display">
-                    <div id="w-icon-container" class="filter drop-shadow(0 0 10px var(--gold))">
-                        <i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i>
-                    </div>
-                    <div class="flex flex-col justify-center border-l-2 border-yellow-600/20 pl-6">
+                    <div id="w-icon-container"><i data-lucide="cloud-sun" class="w-12 h-12 text-yellow-500"></i></div>
+                    <div class="flex flex-col border-l-2 border-yellow-600/20 pl-6">
                         <div class="flex items-center gap-4">
                             <span id="current-temp" class="gold-text">--°</span>
                             <div class="flex flex-col">
                                 <p id="current-time">--:-- --</p>
-                                <p id="weather-desc" class="weather-desc">Consulting the Skies...</p>
+                                <p id="weather-desc" class="text-[10px] uppercase font-black opacity-60">Consulting...</p>
                             </div>
                         </div>
                     </div>
@@ -119,15 +98,19 @@
             </div>
 
             <div id="appt-form" class="artifact-card hidden border-purple-500/50 relative">
-                <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40 hover:opacity-100 transition">✕</button>
-                <h3 class="text-[10px] mb-4 flex justify-between font-bold">Inscribing Ritual: <span id="target-date-display" class="text-purple-400">--</span></h3>
-                <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-4 outline-none italic text-parchment font-black">
+                <button onclick="hideApptForm()" class="absolute top-4 right-4 text-white opacity-40">✕</button>
+                <h3 class="text-[10px] mb-4 font-bold">Seal Ritual: <span id="target-date-display" class="text-purple-400">--</span></h3>
+                <input type="text" id="appt-input" placeholder="Ritual name..." class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-4 outline-none italic font-black">
                 <input type="time" id="appt-time" class="w-full bg-black/40 border-b-2 border-purple-500 p-2 text-sm mb-6 outline-none text-purple-200">
-                <button onclick="saveAppointment()" class="w-full bg-purple-900/30 border-2 border-purple-500 py-3 text-[10px] uppercase tracking-widest font-black hover:bg-purple-900/50 transition">Seal Ritual</button>
+                <button onclick="saveAppointment()" class="w-full bg-purple-900/30 border-2 border-purple-500 py-3 text-[10px] uppercase tracking-widest font-black">Seal Ritual</button>
             </div>
 
             <div class="artifact-card">
-                <h2 id="calendar-month" class="text-center mb-6 text-sm tracking-[0.4em] font-black gold-text border-b border-yellow-600/20 pb-2"></h2>
+                <div class="flex justify-between items-center mb-6">
+                    <i data-lucide="chevron-left" class="nav-btn w-6 h-6" onclick="changeMonth(-1)"></i>
+                    <h2 id="calendar-month" class="text-sm tracking-[0.4em] font-black gold-text"></h2>
+                    <i data-lucide="chevron-right" class="nav-btn w-6 h-6" onclick="changeMonth(1)"></i>
+                </div>
                 <div class="grid grid-cols-7 gap-1 text-center text-[9px] opacity-40 mb-3 font-bold uppercase tracking-widest">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
@@ -140,17 +123,14 @@
             </div>
 
             <div class="artifact-card min-h-[300px] flex flex-col">
-                <h3 class="text-[10px] mb-6 uppercase tracking-widest font-black flex items-center gap-2">
-                    <i data-lucide="scroll" class="w-4 h-4 text-yellow-600"></i> General Whispers
-                </h3>
+                <h3 class="text-[10px] mb-6 uppercase tracking-widest font-black">General Whispers</h3>
                 <div id="whisper-list" class="space-y-4 overflow-y-auto flex-grow mb-4 pr-1 text-sm italic font-black"></div>
                 <div class="mt-auto">
-                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b-2 border-yellow-600/30 p-2 text-sm outline-none italic placeholder-yellow-900/50 font-black">
-                    <button onclick="addWhisper()" class="w-full mt-4 bg-yellow-900/20 border-2 border-yellow-600/40 py-3 text-[10px] uppercase tracking-[0.4em] font-black hover:bg-yellow-600/40 transition">Inscribe</button>
+                    <input type="text" id="whisper-input" placeholder="Whisper into the scroll..." class="w-full bg-transparent border-b-2 border-yellow-600/30 p-2 text-sm outline-none font-black italic">
+                    <button onclick="addWhisper()" class="w-full mt-4 bg-yellow-900/20 border-2 border-yellow-600/40 py-3 text-[10px] uppercase font-black">Inscribe</button>
                 </div>
             </div>
         </section>
-
         <section class="art-panel"></section>
     </div>
 
@@ -159,6 +139,8 @@
         const SB_KEY = 'sb_publishable_aHS858clyUkvMHC3KH-HGQ_kSx1XJ3X';
         const W_KEY = '88f3e35af62ba59bad38a3d346e0ca84';
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
+        
+        let currentDate = new Date();
         let selectedDate = null;
         let allAppointments = [];
 
@@ -173,47 +155,49 @@
                 if(data.main) {
                     document.getElementById('current-temp').innerText = `${Math.round(data.main.temp)}°`;
                     document.getElementById('weather-desc').innerText = data.weather[0].description;
-                    const main = data.weather[0].main.toLowerCase();
-                    let icon = 'cloud-sun';
-                    if(main.includes('rain')) icon = 'cloud-rain'; else if(main.includes('clear')) icon = 'sun';
-                    document.getElementById('w-icon-container').innerHTML = `<i data-lucide="${icon}" class="w-12 h-12 text-yellow-500"></i>`;
-                    lucide.createIcons();
                 }
             } catch (e) { console.error(e); }
         }
 
         async function initData() {
-            try {
-                const { data, error } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
-                if (error) throw error;
-                allAppointments = data || [];
-                renderCalendar();
-                if (selectedDate) loadDayAppointments();
-                loadWhispers();
-                fetchWeather();
-            } catch (e) { console.error("Load Error:", e); }
+            const { data } = await _supabase.from('appointments').select('*').order('event_time', { ascending: true });
+            allAppointments = data || [];
+            renderCalendar();
+            loadWhispers();
+            fetchWeather();
+            lucide.createIcons();
         }
 
         function renderCalendar() {
             const grid = document.getElementById('calendar-days');
-            const now = new Date();
-            const today = now.getDate();
-            document.getElementById('calendar-month').innerText = now.toLocaleString('default', { month: 'long' });
-            const first = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
-            const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const viewMonth = currentDate.getMonth();
+            const viewYear = currentDate.getFullYear();
+            const today = new Date();
+
+            document.getElementById('calendar-month').innerText = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+            
+            const first = new Date(viewYear, viewMonth, 1).getDay();
+            const last = new Date(viewYear, viewMonth + 1, 0).getDate();
             
             grid.innerHTML = "";
             for (let i = 0; i < first; i++) grid.appendChild(document.createElement('div')).className="opacity-0";
             
             for (let i = 1; i <= last; i++) {
                 const d = document.createElement('div');
-                const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const dateKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 d.innerText = i;
-                if (i === today) d.classList.add('today');
+                
+                if (i === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear()) d.classList.add('today');
                 if (allAppointments.some(a => a.event_date === dateKey)) d.classList.add('has-ritual');
+                
                 d.onclick = (e) => selectDay(dateKey, e.target);
                 grid.appendChild(d);
             }
+        }
+
+        function changeMonth(dir) {
+            currentDate.setMonth(currentDate.getMonth() + dir);
+            renderCalendar();
         }
 
         function selectDay(date, el) {
@@ -234,10 +218,8 @@
             const title = document.getElementById('appt-input').value;
             const event_time = document.getElementById('appt-time').value;
             if(!title || !selectedDate) return;
-            const { error } = await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time: event_time || null }]);
-            if (error) return;
+            await _supabase.from('appointments').insert([{ title, event_date: selectedDate, event_time: event_time || null }]);
             document.getElementById('appt-input').value = '';
-            document.getElementById('appt-time').value = '';
             await initData();
         }
 
@@ -246,10 +228,9 @@
             document.getElementById('appt-list').innerHTML = filtered.map(a => `
                 <div class="flex justify-between items-center p-3 bg-purple-900/10 border-l-2 border-purple-500 text-xs shadow-xl mb-1">
                     <span><span class="text-purple-400 font-black mr-2">${a.event_time || ''}</span> ${a.title}</span>
-                    <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-50 hover:opacity-100">✕</button>
+                    <button onclick="deleteAppt('${a.id}')" class="text-red-500 opacity-50">✕</button>
                 </div>
             `).join('');
-            lucide.createIcons();
         }
 
         async function deleteAppt(id) {
@@ -262,10 +243,9 @@
             if (data) document.getElementById('whisper-list').innerHTML = data.map(w => `
                 <div class="flex justify-between items-center p-3 bg-black/40 border-l border-yellow-600/30 mb-2">
                     <span>"${w.title}"</span>
-                    <button onclick="deleteWhisper('${w.id}')" class="text-red-500 opacity-50 hover:opacity-100">✕</button>
+                    <button onclick="deleteWhisper('${w.id}')" class="text-red-500 opacity-50">✕</button>
                 </div>
             `).join('');
-            lucide.createIcons();
         }
 
         async function addWhisper() {
@@ -280,7 +260,7 @@
             loadWhispers();
         }
 
-        updateClock(); initData(); setInterval(updateClock, 1000); setInterval(fetchWeather, 600000);
+        updateClock(); initData(); setInterval(updateClock, 1000);
         _supabase.channel('sync').on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, initData).subscribe();
     </script>
 </body>
